@@ -1,0 +1,1696 @@
+<title>Yare Collection</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&family=Instrument+Sans:wght@400;500&display=swap">
+<style>
+/* Layout: white editorial storefront that turns to black for the last third; tight-tracked
+   old-style serif carries every heading, a quiet sans does the small work. Single look by design. */
+:root {
+  color-scheme: light;
+  --paper: #ffffff;
+  --ink: #0c0b0a;
+  --stone: #726c65;        /* muted text on paper */
+  --line: #e6e1da;         /* hairlines on paper */
+  --wash: #f6f2ec;         /* quiet panel behind photos */
+  --sand: #ece4d8;         /* hero ground, taken from the wall behind the bust */
+  --ink-soft: #4a433c;
+  --night: #060505;
+  --chalk: #ffffff;
+  --chalk-soft: #b3aca3;   /* muted text on night */
+  --night-line: #2b2824;
+  --brand: #8a5833;        /* the brown of the logo's lotus */
+  --brand-warm: #e48938;   /* the orange of the logo's script */
+
+  --serif: "Cormorant Garamond", "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  --sans: "Instrument Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  --gutter: clamp(16px, 2.75vw, 42px);
+  --t-small: 0.875rem;
+  --t-body: 1.0625rem;
+  --t-card: clamp(1.2rem, 1.55vw, 1.5rem);
+  --t-h2: clamp(2.25rem, 3.15vw, 3rem);
+  --t-h3: clamp(2rem, 2.9vw, 2.75rem);
+  --t-hero: clamp(3.1rem, 7.6vw, 7.25rem);
+  --header-h: 92px;
+  --ease: cubic-bezier(.2, .7, .2, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--paper); color: var(--ink);
+  font-family: var(--sans); font-size: var(--t-body); line-height: 1.5; letter-spacing: .012em;
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+}
+img { display: block; width: 100%; height: 100%; object-fit: cover; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; letter-spacing: inherit; }
+h1, h2, h3, h4, p, ul, ol, dl, dd { margin: 0; }
+ul, ol { padding: 0; list-style: none; }
+:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+.serif { font-family: var(--serif); font-weight: 500; letter-spacing: -.045em; line-height: 1; }
+.muted { color: var(--stone); }
+.small { font-size: .9375rem; }
+
+.link { position: relative; padding-block: 2px; }
+.link::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; background: currentColor;
+  transform: scaleX(0); transform-origin: left; transition: transform .45s var(--ease);
+}
+.link:hover::after, .link:focus-visible::after, .link[aria-current="page"]::after { transform: scaleX(1); }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 50px; padding: 0 28px;
+  border: 1px solid var(--ink); border-radius: 999px; background: var(--ink); color: var(--chalk);
+  transition: background .35s var(--ease), color .35s var(--ease);
+}
+.btn:hover { background: var(--paper); color: var(--ink); }
+
+/* ───────── announcement + header ───────── */
+.announce { background: var(--night); color: var(--chalk); padding: 12px var(--gutter); text-align: center; font-size: .9375rem; letter-spacing: .03em; }
+.header {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 30;
+  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 24px;
+  min-height: var(--header-h); padding-inline: var(--gutter);
+  background: var(--paper); border-bottom: 1px solid transparent; transition: border-color .3s;
+}
+.header.is-stuck { border-bottom-color: var(--line); }
+.logo { display: inline-block; justify-self: start; height: 58px; }
+.logo img { width: auto; height: 100%; object-fit: contain; }
+.nav { display: flex; align-items: center; gap: clamp(22px, 3vw, 46px); }
+.nav__item { position: relative; }
+.nav__top { display: inline-flex; align-items: center; gap: 7px; }
+.nav__top svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.4; transition: transform .35s var(--ease); }
+.drop {
+  position: absolute; left: -22px; top: 100%; min-width: 250px; padding: 14px 22px 18px; background: var(--paper); border: 1px solid var(--line);
+  opacity: 0; visibility: hidden; transform: translateY(6px); transition: opacity .25s, transform .35s var(--ease), visibility .25s;
+}
+.drop::before { content: ""; position: absolute; left: 0; right: 0; top: -16px; height: 16px; }
+.nav__item:hover .drop, .nav__item:focus-within .drop { opacity: 1; visibility: visible; transform: none; }
+.nav__item:hover .nav__top svg, .nav__item:focus-within .nav__top svg { transform: rotate(180deg); }
+.drop li { display: flex; justify-content: space-between; align-items: baseline; gap: 24px; padding-block: 7px; }
+.drop li + li { border-top: 1px solid var(--line); }
+.drop a { font-family: var(--serif); font-size: 1.375rem; letter-spacing: -.02em; }
+.drop span { font-size: .8125rem; color: var(--stone); font-variant-numeric: tabular-nums; }
+.tools { display: flex; align-items: center; justify-content: flex-end; gap: clamp(12px, 1.8vw, 26px); }
+.tool { position: relative; display: inline-flex; align-items: center; justify-content: center; height: 44px; min-width: 34px; }
+.tool svg { width: 30px; height: 30px; fill: none; stroke: currentColor; stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; transition: transform .35s var(--ease); }
+.tool:hover svg { transform: translateY(-1px); }
+.bag__n { position: absolute; left: 0; right: 0; top: 19px; text-align: center; font-size: .75rem; line-height: 1; font-variant-numeric: tabular-nums; }
+.wish__n { position: absolute; right: -4px; top: 4px; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 8px; background: var(--ink); color: var(--chalk); font-size: .625rem; line-height: 16px; text-align: center; }
+.menu-btn { display: none; }
+
+/* ───────── hero: one wide picture; the wall behind the bust melts into the words ───────── */
+.hero { position: relative; height: clamp(480px, min(52vw, 100vh - 150px), 820px); overflow: hidden; background: #8e806f; color: var(--chalk); }
+.hero__bg img { position: absolute; inset: 0; object-position: 100% 32%; }
+.hero::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, rgba(40, 28, 16, .36), rgba(40, 28, 16, .14) 44%, rgba(40, 28, 16, 0) 62%); }
+.hero__body { position: absolute; z-index: 1; left: var(--gutter); top: 50%; transform: translateY(-50%); width: min(54%, 860px); display: grid; gap: clamp(16px, 1.6vw, 24px); justify-items: start; }
+.hero__title { font-size: clamp(3.1rem, 6.9vw, 6.75rem); letter-spacing: -.055em; line-height: .94; max-width: 7em; text-wrap: balance; }
+.hero__note { font-size: clamp(1.1875rem, 1.6vw, 1.5rem); line-height: 1.4; max-width: 32ch; }
+.hero__ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: clamp(6px, 1vw, 14px); }
+.hero__cta {
+  display: inline-flex; align-items: center; justify-content: center; gap: 12px;
+  height: clamp(58px, 4.4vw, 68px); padding: 0 clamp(28px, 2.6vw, 40px); border-radius: 999px; border: 1px solid var(--paper);
+  background: var(--paper); color: var(--ink); font-size: clamp(1.0625rem, 1.15vw, 1.1875rem); letter-spacing: .02em;
+  transition: background .35s var(--ease), color .35s var(--ease), border-color .35s var(--ease);
+}
+.hero__cta svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; flex: none; transition: transform .45s var(--ease); }
+.hero__cta:hover { background: var(--ink); border-color: var(--ink); color: var(--chalk); }
+.hero__cta:hover svg { transform: translateX(4px); }
+.hero__cta--wa { background: rgba(255, 255, 255, .1); color: var(--chalk); border-color: rgba(255, 255, 255, .8); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.hero__cta--wa svg { width: 23px; height: 23px; }
+.hero__cta--wa:hover { background: var(--paper); color: var(--ink); border-color: var(--paper); }
+.hero__cta--wa:hover svg { transform: none; }
+.hero__local { font-size: .9375rem; letter-spacing: .02em; opacity: .88; }
+
+/* ───────── language + currency ───────── */
+.vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.lang { display: inline-flex; align-items: center; height: 36px; padding: 3px; border: 1px solid var(--line); border-radius: 999px; }
+.lang button { height: 28px; min-width: 36px; padding: 0 9px; border-radius: 999px; font-size: .8125rem; letter-spacing: .06em; color: var(--stone); transition: background .25s, color .25s; }
+.lang button[aria-pressed="true"] { background: var(--ink); color: var(--chalk); }
+.lang button:not([aria-pressed="true"]):hover { color: var(--ink); }
+.cur { position: relative; display: inline-flex; }
+.cur select { -webkit-appearance: none; appearance: none; height: 36px; padding: 0 30px 0 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--paper); color: var(--ink); font: inherit; font-size: .8125rem; letter-spacing: .06em; cursor: pointer; }
+.cur::after { content: ""; position: absolute; right: 13px; top: 50%; width: 6px; height: 6px; border-right: 1.2px solid currentColor; border-bottom: 1.2px solid currentColor; transform: translateY(-70%) rotate(45deg); pointer-events: none; }
+.nav__prefs { display: none; }
+.announce a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+.announce a:hover { color: var(--chalk-soft); }
+.sheet__approx { margin-top: 4px; font-size: .8125rem; color: var(--stone); }
+.sheet__ship { font-size: var(--t-small); color: var(--stone); }
+.form__send[hidden] { display: none; }
+.stores { margin-top: 28px; max-width: 760px; }
+.stores li { display: flex; align-items: center; justify-content: space-between; gap: 16px 24px; padding-block: 18px; border-top: 1px solid var(--line); }
+.stores li:last-child { border-bottom: 1px solid var(--line); }
+.stores span { display: block; color: var(--stone); font-size: .875rem; }
+.stores b { display: block; font-size: clamp(1.5rem, 2vw, 1.875rem); letter-spacing: -.02em; line-height: 1.1; margin-top: 2px; }
+.stores address { font-style: normal; color: var(--stone); font-size: .9375rem; margin-top: 6px; max-width: 46ch; }
+.stores .btn { flex: none; min-height: 44px; padding: 0 22px; }
+@media (max-width: 720px) { .stores li { flex-direction: column; align-items: flex-start; } }
+.policy { max-width: 900px; }
+.policy > li { display: grid; grid-template-columns: minmax(0, 12em) minmax(0, 1fr); gap: 6px 28px; align-items: baseline; padding-block: 18px; border-top: 1px solid var(--line); }
+.policy > li:last-child { border-bottom: 1px solid var(--line); }
+.policy h3 { font-family: var(--serif); font-weight: 500; font-size: 1.5rem; letter-spacing: -.02em; line-height: 1.1; }
+.policy p { max-width: 60ch; }
+.policy ol { list-style: decimal; padding-left: 1.2em; display: grid; gap: 6px; max-width: 60ch; }
+.ways__num { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+.ways__where { color: var(--stone); font-size: .875rem; }
+.contactlist > div { grid-template-columns: 7.5em minmax(0, 1fr); }
+.sheet__ship .link { color: var(--ink); white-space: nowrap; }
+@media (max-width: 720px) { .policy > li { grid-template-columns: minmax(0, 1fr); } }
+.pick { position: relative; width: min(440px, calc(100vw - 32px)); padding: 34px 28px 28px; border: 0; background: var(--paper); color: var(--ink); }
+.pick::backdrop { background: rgba(8, 6, 4, .55); }
+.pick[open] { display: grid; gap: 10px; }
+.pick h2 { font-size: 2rem; letter-spacing: -.04em; padding-right: 40px; }
+.pick__note { color: var(--stone); font-size: .9375rem; }
+.pick__row { display: grid; gap: 10px; margin-top: 12px; }
+[data-pick] { cursor: pointer; }
+.pick .btn { width: 100%; padding: 0 16px; white-space: nowrap; }
+@media (max-width: 720px) { .pick { padding: 30px 20px 22px; } .pick h2 { font-size: 1.75rem; } }
+.pick .sheet__close { top: 10px; right: 10px; }
+.shipline + .shipline { margin-top: 10px; }
+.shipline + .draft { margin-top: 18px; }
+.wa-float { transition: transform .35s var(--ease), background .3s, opacity .3s, visibility .3s; }
+.wa-float.is-tucked { opacity: 0; visibility: hidden; transform: translateY(12px); }
+
+/* ───────── home: three collections ───────── */
+.trio { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(14px, 1.8vw, 28px); padding: clamp(40px, 4.2vw, 62px) var(--gutter) clamp(44px, 4.6vw, 70px); }
+.col__head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: clamp(16px, 1.8vw, 26px); }
+.col__head h2 { font-size: var(--t-h2); }
+.col__media { display: block; aspect-ratio: 3 / 4; overflow: hidden; background: var(--wash); width: 100%; }
+.col__media img { transition: transform 1.5s var(--ease); }
+.col__media:hover img { transform: scale(1.04); }
+.col__name { display: block; font-family: var(--serif); font-weight: 500; font-size: var(--t-card); letter-spacing: -.01em; line-height: 1.15; margin-top: clamp(14px, 1.6vw, 22px); text-align: left; }
+.col__text { color: var(--stone); font-size: .9375rem; margin-top: 8px; max-width: 46ch; }
+.intent { margin-top: 10px; font-size: .9375rem; color: var(--brand); }
+.intent a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+
+/* ───────── home: intention / materials / story ───────── */
+.info { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr) minmax(0, 1.15fr); border-top: 1px solid var(--line); margin-inline: var(--gutter); }
+.info > div { padding: clamp(28px, 3vw, 46px) clamp(18px, 2.4vw, 38px) clamp(36px, 4vw, 60px); }
+.info > div:first-child { padding-left: 0; }
+.info > div:last-child { padding-right: 0; }
+.info > div + div { border-left: 1px solid var(--line); }
+.info h2 { font-size: clamp(1.75rem, 2.2vw, 2.125rem); letter-spacing: -.035em; margin-bottom: clamp(16px, 1.8vw, 26px); }
+.intents li { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; border-top: 1px solid var(--line); padding-block: 9px; }
+.intents li:last-child { border-bottom: 1px solid var(--line); }
+.intents a { font-family: var(--serif); font-size: 1.625rem; letter-spacing: -.025em; line-height: 1.1; }
+.intents span { color: var(--stone); font-size: var(--t-small); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.mats { display: grid; gap: 20px; }
+.mats li { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 16px; align-items: start; }
+.mats svg { width: 44px; height: 44px; fill: none; stroke: var(--brand); stroke-width: 1.1; stroke-linecap: round; stroke-linejoin: round; }
+.mats h3 { font-family: var(--serif); font-weight: 500; font-size: 1.375rem; letter-spacing: -.015em; line-height: 1.15; }
+.mats p { color: var(--stone); font-size: .9375rem; margin-top: 3px; }
+.story-teaser p { max-width: 44ch; }
+.story-teaser p + p { margin-top: 14px; }
+.story-teaser .link { display: inline-block; margin-top: 22px; }
+
+/* ───────── catalogue ───────── */
+.cata__head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 32px; padding: clamp(34px, 3.8vw, 56px) var(--gutter) clamp(22px, 2.4vw, 34px); }
+.cata__head p:first-child { color: var(--brand); font-size: .9375rem; margin-bottom: 10px; }
+.cata__head h1 { font-size: clamp(2.75rem, 5.2vw, 4.75rem); letter-spacing: -.055em; }
+.cata__head .muted { font-variant-numeric: tabular-nums; }
+.filters { position: sticky; top: calc(var(--header-h) + env(safe-area-inset-top, 0px)); z-index: 20; background: var(--paper); border-block: 1px solid var(--line); padding: 0 var(--gutter); }
+.filters__row { display: flex; align-items: center; gap: 8px 26px; overflow-x: auto; scrollbar-width: none; padding-block: 13px; }
+.filters__row::-webkit-scrollbar { display: none; }
+.filters__row + .filters__row { border-top: 1px solid var(--line); padding-block: 10px; }
+.tab { flex: none; font-family: var(--serif); font-size: 1.5rem; letter-spacing: -.025em; line-height: 1.2; color: var(--stone); position: relative; padding-block: 2px; transition: color .3s; }
+.tab sup { font-family: var(--sans); font-size: .6875rem; letter-spacing: 0; margin-left: 4px; font-variant-numeric: tabular-nums; }
+.tab[aria-current="page"], .tab:hover { color: var(--ink); }
+.tab[aria-current="page"]::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; background: var(--ink); }
+.filters__label { flex: none; font-size: var(--t-small); color: var(--stone); }
+.chip { flex: none; height: 34px; padding: 0 16px; border: 1px solid var(--line); border-radius: 999px; font-size: var(--t-small); transition: background .3s, color .3s, border-color .3s; }
+.chip:hover { border-color: var(--ink); }
+.chip[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--chalk); }
+
+.grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(28px, 3vw, 46px) clamp(12px, 1.6vw, 24px); padding: clamp(24px, 2.6vw, 38px) var(--gutter) clamp(52px, 5.4vw, 84px); }
+.card { display: flex; flex-direction: column; align-items: center; text-align: center; }
+.card__media { position: relative; width: 100%; aspect-ratio: 3 / 4; overflow: hidden; background: var(--wash); }
+.card__open { display: block; width: 100%; height: 100%; }
+.ph { display: grid; place-items: center; width: 100%; height: 100%; min-height: 160px; padding: 16px; text-align: center; color: var(--stone); font-size: .9375rem; letter-spacing: .02em; background: var(--wash); }
+.rail__media .ph { background: transparent; color: var(--chalk-soft, #c9c0b4); }
+.card__media img { transition: transform 1.4s var(--ease); }
+.card:hover .card__media img { transform: scale(1.045); }
+.card__wish { position: absolute; top: 10px; right: 10px; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; color: var(--ink); background: rgba(255, 255, 255, .55); transition: background .3s; }
+.card__wish svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.25; transition: fill .25s, transform .35s var(--ease); }
+.card__wish:hover { background: rgba(255, 255, 255, .92); }
+[data-wish][aria-pressed="true"] svg { fill: currentColor; transform: scale(1.08); }
+.card__add {
+  position: absolute; left: 10px; right: 10px; bottom: 10px; height: 46px; background: var(--paper); color: var(--ink); font-size: .9375rem;
+  display: flex; align-items: center; justify-content: center; gap: 10px; transition: transform .5s var(--ease), opacity .35s, background .3s, color .3s;
+}
+.card__add:hover { background: var(--ink); color: var(--chalk); }
+@media (hover: hover) {
+  .card__add { transform: translateY(calc(100% + 12px)); opacity: 0; }
+  .card:hover .card__add, .card__add:focus-visible { transform: none; opacity: 1; }
+}
+.card__no { color: var(--stone); font-size: .8125rem; margin-top: clamp(12px, 1.4vw, 20px); font-variant-numeric: tabular-nums; }
+.card__name { font-family: var(--serif); font-weight: 500; font-size: var(--t-card); letter-spacing: -.01em; line-height: 1.15; margin-top: 5px; text-wrap: balance; }
+.card__price { color: var(--stone); margin-top: 6px; font-variant-numeric: tabular-nums; }
+.empty { grid-column: 1 / -1; padding: clamp(40px, 7vw, 110px) 0; text-align: center; display: grid; gap: 18px; justify-items: center; }
+.empty p:first-child { font-family: var(--serif); font-size: var(--t-h3); letter-spacing: -.04em; line-height: 1.05; max-width: 20ch; }
+
+/* sections under the grid: label holds on the left while its content scrolls */
+.part { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2.94fr); border-top: 1px solid var(--line); margin-inline: var(--gutter); padding-block: clamp(36px, 4vw, 62px) clamp(48px, 5.4vw, 84px); scroll-margin-top: calc(var(--header-h) + 8px); }
+.part__label { align-self: start; position: sticky; top: calc(var(--header-h) + 24px + env(safe-area-inset-top, 0px)); padding-right: 28px; display: grid; gap: 14px; justify-items: start; }
+.part__label h2 { font-size: var(--t-h3); text-wrap: balance; }
+.part__label p { color: var(--stone); font-size: .9375rem; max-width: 30ch; }
+.part__body { min-width: 0; }
+
+.guide__row { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .8fr) minmax(0, 2.5fr) auto; gap: 8px 28px; align-items: baseline; padding-block: 18px; border-top: 1px solid var(--line); }
+.guide__row:last-child { border-bottom: 1px solid var(--line); }
+.guide__row--head { padding-block: 0 12px; border-top: 0; font-size: var(--t-small); color: var(--stone); }
+.guide__stone { font-family: var(--serif); font-weight: 500; font-size: 1.625rem; letter-spacing: -.025em; line-height: 1.1; }
+.guide__intent { color: var(--brand); }
+.guide__n { font-variant-numeric: tabular-nums; color: var(--stone); font-size: var(--t-small); white-space: nowrap; text-align: right; }
+
+.story { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: clamp(24px, 3.4vw, 56px); align-items: start; }
+.story__text p { max-width: 52ch; }
+.story__text p + p { margin-top: 16px; }
+.story__lead { font-family: var(--serif); font-size: clamp(1.5rem, 2.1vw, 2rem); letter-spacing: -.025em; line-height: 1.18; }
+.story__photo { aspect-ratio: 3 / 4; overflow: hidden; background: var(--wash); }
+.gloss { margin-top: clamp(28px, 3vw, 44px); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: clamp(24px, 3.4vw, 56px); }
+.gloss > div { display: grid; grid-template-columns: 7.2em minmax(0, 1fr); gap: 14px; padding-block: 12px; border-top: 1px solid var(--line); align-items: baseline; }
+.gloss dt { font-family: var(--serif); font-style: italic; font-size: 1.375rem; line-height: 1.1; }
+.gloss dd { color: var(--stone); font-size: .9375rem; }
+.draft { margin-top: 26px; padding: 14px 18px; border: 1px dashed #c9bfb2; color: var(--stone); font-size: var(--t-small); max-width: 62ch; }
+.draft b { color: var(--brand); font-weight: 500; }
+
+.order { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: clamp(28px, 4vw, 68px); align-items: start; }
+.order h3 { font-family: var(--serif); font-weight: 500; font-size: 1.75rem; letter-spacing: -.03em; line-height: 1.1; margin-bottom: 16px; }
+.sel__empty { padding: 22px 0; border-block: 1px solid var(--line); color: var(--stone); }
+.sel li { display: grid; grid-template-columns: 54px minmax(0, 1fr) auto; gap: 14px; align-items: center; padding-block: 12px; border-top: 1px solid var(--line); }
+.sel li img { width: 54px; height: 72px; }
+.sel__name { font-family: var(--serif); font-size: 1.25rem; line-height: 1.15; letter-spacing: -.01em; }
+.sel__meta { color: var(--stone); font-size: .8125rem; font-variant-numeric: tabular-nums; margin-top: 3px; }
+.sel__side { display: grid; justify-items: end; gap: 6px; font-variant-numeric: tabular-nums; }
+.qty { display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 999px; height: 32px; }
+.qty button { width: 32px; height: 30px; }
+.qty span { min-width: 18px; text-align: center; font-size: var(--t-small); }
+.sel__total { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding-block: 16px; border-block: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+.sel__total b { font-family: var(--serif); font-weight: 500; font-size: 1.625rem; letter-spacing: -.02em; }
+.prices { margin-top: 26px; }
+.prices summary { cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+.prices summary::marker, .prices summary::-webkit-details-marker { display: none; content: ""; }
+.prices summary::after { content: "+"; font-size: 1.125rem; line-height: 1; }
+.prices[open] summary::after { content: "–"; }
+.prices__wrap { overflow-x: auto; margin-top: 14px; }
+.prices table { width: 100%; border-collapse: collapse; font-size: .9375rem; }
+.prices th { text-align: left; font-weight: 400; color: var(--stone); font-size: var(--t-small); padding: 0 12px 8px 0; }
+.prices td { padding: 8px 12px 8px 0; border-top: 1px solid var(--line); vertical-align: baseline; }
+.prices td:first-child, .prices td:last-child, .prices th:last-child { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.prices td:last-child, .prices th:last-child { text-align: right; padding-right: 0; }
+.form { display: grid; gap: 18px; }
+.field label { display: block; font-size: .9375rem; }
+.field input, .field textarea {
+  width: 100%; min-height: 42px; margin-top: 2px; padding: 6px 0; font: inherit; color: inherit; background: transparent;
+  border: 0; border-bottom: 1px solid var(--ink); border-radius: 0; outline: 0; resize: vertical; transition: box-shadow .3s;
+}
+.field input:focus, .field textarea:focus { box-shadow: 0 1px 0 var(--ink); }
+.form__msg { min-height: 1.5em; font-size: .9375rem; color: var(--stone); }
+.form__msg[data-state="error"] { color: #a2391c; }
+.form__msg[data-state="ok"] { color: var(--ink); }
+
+/* ───────── page heads: words on the left, one picture on the right ───────── */
+.phead { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: clamp(20px, 3vw, 48px); align-items: end; padding: clamp(22px, 2.6vw, 40px) var(--gutter) clamp(26px, 3vw, 46px); }
+.phead__text { display: grid; gap: 16px; justify-items: start; padding-bottom: 4px; }
+.phead__eyebrow { color: var(--brand); font-size: .9375rem; }
+.phead h1 { font-size: clamp(2.75rem, 4.9vw, 4.75rem); letter-spacing: -.055em; text-wrap: balance; }
+.phead__intro { max-width: 38ch; }
+.phead__meta { color: var(--stone); font-size: .9375rem; font-variant-numeric: tabular-nums; }
+.phead__media { aspect-ratio: var(--ar, 3 / 2); height: clamp(340px, 40vw, 600px); max-width: 60vw; overflow: hidden; background: var(--wash); }
+.phead__media img { object-fit: contain; }
+.grid--few { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.card__stone { color: var(--brand); font-size: .8125rem; margin-top: 6px; }
+
+/* spec list, in the client's own labels */
+.spec > div { display: grid; grid-template-columns: 9.6em minmax(0, 1fr); gap: 14px; padding-block: 10px; border-top: 1px solid var(--line); align-items: baseline; }
+.spec > div:last-child { border-bottom: 1px solid var(--line); }
+.spec dt { color: var(--stone); font-size: var(--t-small); }
+.spec dd { font-size: .9375rem; }
+.spec a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.sheet__note { color: var(--stone); font-size: var(--t-small); }
+
+/* guide: intention rows */
+.irow { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 2fr) auto; gap: 8px 28px; align-items: baseline; padding-block: 16px; border-top: 1px solid var(--line); }
+.irow:last-child { border-bottom: 1px solid var(--line); }
+.irow h3 { font-family: var(--serif); font-weight: 500; font-size: clamp(1.75rem, 2.4vw, 2.25rem); letter-spacing: -.035em; line-height: 1; }
+.irow p { color: var(--stone); }
+.irow a { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.part .mats { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(20px, 2.6vw, 40px); }
+
+.contactlist > div { display: grid; grid-template-columns: 7.5em minmax(0, 1fr); gap: 14px; padding-block: 12px; border-top: 1px solid var(--line); }
+.contactlist > div:last-child { border-bottom: 1px solid var(--line); }
+.contactlist dt { color: var(--stone); font-size: var(--t-small); }
+.twocol { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(24px, 3.4vw, 56px); align-items: start; }
+.twocol h3 { font-family: var(--serif); font-weight: 500; font-size: 1.75rem; letter-spacing: -.03em; line-height: 1.1; margin-bottom: 16px; }
+.next { display: flex; flex-wrap: wrap; gap: 12px 34px; align-items: baseline; justify-content: space-between; border-top: 1px solid var(--line); margin-inline: var(--gutter); padding-block: clamp(26px, 3vw, 44px) clamp(44px, 5vw, 76px); }
+.next p { font-family: var(--serif); font-size: var(--t-h3); letter-spacing: -.04em; line-height: 1.05; }
+
+@media (max-width: 980px) {
+  .phead { grid-template-columns: minmax(0, 1fr); align-items: start; }
+  .phead__media { height: auto; width: 100%; max-width: 520px; }
+  .part .mats { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 720px) {
+  .grid--few { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .irow { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+  .twocol { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ───────── ordering by message ───────── */
+.btn svg, .card__add svg, .tool--wa svg, .wa-float svg { fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.btn svg { width: 20px; height: 20px; }
+.btn--line { background: var(--paper); color: var(--ink); }
+.btn--line:hover { background: var(--ink); color: var(--chalk); }
+.btn--quiet { background: transparent; color: var(--ink); border-color: var(--line); }
+.btn--quiet:hover { background: var(--wash); color: var(--ink); }
+.card__add svg { width: 18px; height: 18px; }
+.ways { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 2vw, 28px); }
+.ways li { display: grid; align-content: start; gap: 8px; padding-top: 16px; border-top: 1px solid var(--ink); }
+.ways__label { color: var(--brand); font-size: .9375rem; }
+.ways__value { font-family: var(--serif); font-size: clamp(1.5rem, 2vw, 1.875rem); letter-spacing: -.02em; line-height: 1.1; overflow-wrap: anywhere; user-select: all; }
+.ways__note { color: var(--stone); font-size: .9375rem; margin-bottom: 10px; }
+.ways .btn { justify-self: start; }
+.ways__row { display: flex; flex-wrap: wrap; gap: 10px; }
+.form--wide { max-width: 860px; }
+.form__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 28px; }
+.field__hint { color: var(--stone); font-size: .8125rem; margin-top: 6px; }
+.form__send { display: flex; flex-wrap: wrap; gap: 12px; }
+.form .btn { justify-self: start; }
+.join__row { display: grid; gap: 12px; }
+.join .submit { display: flex; align-items: center; justify-content: center; }
+.wa-float {
+  position: fixed; right: calc(16px + env(safe-area-inset-right, 0px)); bottom: calc(18px + env(safe-area-inset-bottom, 0px)); z-index: 70;
+  display: inline-flex; align-items: center; gap: 10px; height: 52px; padding: 0 20px 0 16px; border-radius: 999px;
+  background: var(--ink); color: var(--chalk); font-size: .9375rem; box-shadow: 0 6px 24px rgba(12, 11, 10, .22);
+  transition: transform .35s var(--ease), background .3s;
+}
+.wa-float svg { width: 22px; height: 22px; }
+.wa-float:hover { transform: translateY(-2px); background: #2a2622; }
+@media (max-width: 980px) { .ways { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 720px) {
+  .form__grid { grid-template-columns: minmax(0, 1fr); }
+  .wa-float { height: 50px; width: 50px; padding: 0; justify-content: center; }
+  .wa-float span { display: none; }
+}
+
+/* ───────── product sheet ───────── */
+.sheet { width: min(1080px, calc(100vw - 32px)); max-width: none; height: min(88vh, 860px); max-height: none; padding: 0; border: 0; background: var(--paper); color: var(--ink); overflow: hidden; }
+.sheet::backdrop { background: rgba(8, 6, 4, .55); }
+.sheet[open] { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); }
+.sheet__media { background: var(--wash); min-height: 0; height: 100%; overflow: hidden; }
+.sheet__media img { object-fit: contain; }
+.sheet__body { padding: clamp(24px, 3.2vw, 46px); overflow-y: auto; min-height: 0; display: grid; align-content: start; gap: 18px; }
+.sheet__no { color: var(--stone); font-size: var(--t-small); font-variant-numeric: tabular-nums; padding-right: 44px; }
+.sheet__body h2 { font-size: clamp(2rem, 2.8vw, 2.625rem); letter-spacing: -.04em; text-wrap: balance; }
+.sheet__price { font-size: 1.1875rem; font-variant-numeric: tabular-nums; }
+.sheet__stones { display: grid; gap: 16px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+.sheet__stones h3 { font-family: var(--serif); font-weight: 500; font-size: 1.375rem; letter-spacing: -.015em; line-height: 1.1; margin-bottom: 4px; }
+.sheet__stones p { font-size: .9375rem; }
+.sheet__stones .intent { margin-top: 6px; }
+.sheet__orig { color: var(--stone); font-size: var(--t-small); }
+.sheet__actions { display: flex; align-items: center; gap: 12px; }
+.sheet__actions .btn { flex: 1; }
+.round { width: 50px; height: 50px; border: 1px solid var(--line); border-radius: 50%; display: grid; place-items: center; flex: none; transition: border-color .3s; }
+.round:hover { border-color: var(--ink); }
+.round svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.25; }
+.sheet__close { position: absolute; top: 14px; right: 14px; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: rgba(255, 255, 255, .85); z-index: 2; }
+.sheet__close svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.3; }
+
+/* ───────── night half ───────── */
+.night { background: var(--night); color: var(--chalk); }
+.marquee { overflow: hidden; padding-block: clamp(32px, 3.8vw, 58px); }
+.marquee__track { display: flex; width: max-content; animation: slide 52s linear infinite; }
+.marquee:hover .marquee__track { animation-play-state: paused; }
+.marquee__group { display: flex; align-items: center; flex: none; }
+.marquee__group span { font-family: var(--serif); font-weight: 500; font-size: clamp(2.75rem, 5.6vw, 5.4rem); letter-spacing: -.05em; line-height: 1.1; white-space: nowrap; }
+.marquee__group i { flex: none; width: .34em; height: .34em; margin-inline: clamp(18px, 2.2vw, 36px); border: 1px solid var(--chalk); border-radius: 50%; font-size: clamp(2.75rem, 5.6vw, 5.4rem); }
+@keyframes slide { to { transform: translateX(-50%); } }
+.rule { height: 1px; background: var(--night-line); }
+.studio { padding-block: 0 clamp(36px, 3.6vw, 54px); }
+.studio__head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; padding-inline: var(--gutter); margin-bottom: clamp(20px, 2vw, 28px); }
+.studio__head h2 { font-size: var(--t-h2); }
+.studio__head a { color: var(--chalk-soft); }
+.studio__wrap { position: relative; }
+.rail { display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gutter); padding-inline: var(--gutter); scrollbar-width: none; }
+.rail::-webkit-scrollbar { display: none; }
+.rail li { flex: none; width: clamp(220px, 23.6vw, 360px); scroll-snap-align: start; }
+.rail button { display: block; width: 100%; text-align: left; }
+.rail__media { aspect-ratio: 3 / 4; overflow: hidden; background: var(--night-line); }
+.rail__media img { transition: transform 1.5s var(--ease); }
+.rail button:hover img { transform: scale(1.04); }
+.rail__name { display: block; font-family: var(--serif); font-size: 1.3125rem; line-height: 1.15; letter-spacing: -.01em; margin-top: 14px; }
+.rail__price { display: block; color: var(--chalk-soft); font-size: .9375rem; margin-top: 4px; font-variant-numeric: tabular-nums; }
+.rail__btn { position: absolute; top: 38%; translate: 0 -50%; width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; color: var(--ink); background: rgba(255, 255, 255, .82); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); transition: background .3s, opacity .3s, transform .35s var(--ease); }
+.rail__btn svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.25; }
+.rail__btn:hover { background: var(--paper); transform: scale(1.06); }
+.rail__btn--prev { left: var(--gutter); }
+.rail__btn--next { right: var(--gutter); }
+.rail__btn[disabled] { opacity: 0; pointer-events: none; }
+
+/* ───────── footer ───────── */
+.footer { padding: clamp(36px, 3.6vw, 54px) var(--gutter) clamp(28px, 3vw, 46px); scroll-margin-top: var(--header-h); }
+.footer__cols { display: grid; grid-template-columns: 1fr 1.3fr 1.45fr minmax(280px, 1.65fr); gap: 32px clamp(20px, 2.4vw, 40px); }
+.footer__cols li { line-height: 2; }
+.footer__cols address { font-style: normal; line-height: 1.95; }
+.join h2 { font-family: var(--serif); font-weight: 500; font-size: 2rem; letter-spacing: -.03em; line-height: 1; margin-bottom: 30px; }
+.join > p { margin-bottom: 30px; }
+.join label { display: block; font-size: .9375rem; }
+.join input[type="email"] { width: 100%; height: 44px; margin-top: 2px; padding: 0; font: inherit; color: var(--chalk); background: transparent; border: 0; border-bottom: 1px solid var(--chalk); border-radius: 0; outline: 0; }
+.join input[type="email"]:focus { border-bottom-color: var(--brand-warm); box-shadow: 0 1px 0 var(--brand-warm); }
+.join .check { display: flex; align-items: center; gap: 14px; margin-block: 30px; cursor: pointer; font-size: var(--t-body); }
+.check input { appearance: none; -webkit-appearance: none; flex: none; width: 20px; height: 20px; margin: 0; border: 1px solid var(--chalk); background: transparent; display: grid; place-items: center; cursor: pointer; }
+.check input::after { content: ""; width: 10px; height: 10px; background: var(--chalk); transform: scale(0); transition: transform .2s var(--ease); }
+.check input:checked::after { transform: scale(1); }
+.submit { width: 100%; height: 52px; border: 1px solid var(--chalk); border-radius: 999px; font-size: 1.125rem; transition: background .35s var(--ease), color .35s var(--ease); }
+.submit:hover { background: var(--chalk); color: var(--night); }
+.join__msg { min-height: 1.5em; margin-top: 14px; font-size: .9375rem; color: var(--chalk-soft); }
+.join__msg[data-state="ok"] { color: var(--chalk); }
+.join__msg[data-state="error"] { color: #f0b9a4; }
+.wordmark { margin-top: clamp(48px, 7vw, 110px); font-family: var(--serif); font-weight: 300; font-size: clamp(3.4rem, 12.4vw, 12.5rem); line-height: .9; letter-spacing: -.05em; text-align: left; margin-left: -.03em; }
+.footer__base { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 12px 30px; margin-top: clamp(22px, 2.6vw, 40px); }
+.social { display: flex; flex-wrap: wrap; gap: 8px 30px; }
+.footer__base small { font-size: var(--t-small); color: var(--chalk-soft); }
+
+.toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); z-index: 80; translate: -50% 0; max-width: calc(100vw - 32px); padding: 13px 22px; background: var(--ink); color: var(--chalk); border: 1px solid #3a3631; font-size: .9375rem; opacity: 0; transform: translateY(12px); pointer-events: none; transition: opacity .3s, transform .45s var(--ease); }
+.toast.is-on { opacity: 1; transform: none; }
+
+@media (min-width: 981px) { .nav__item.is-shut .drop { opacity: 0; visibility: hidden; } }
+
+/* ───────── narrower screens ───────── */
+@media (max-width: 1080px) {
+  .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .guide__row { grid-template-columns: minmax(0, 1fr) minmax(0, .8fr) minmax(0, 2fr); }
+  .guide__n { display: none; }
+}
+@media (max-width: 980px) {
+  :root { --header-h: 72px; }
+  .hero { height: clamp(460px, 62vw, 640px); }
+  .hero__body { width: 58%; }
+  .hero::after { background: linear-gradient(90deg, rgba(40, 28, 16, .42), rgba(40, 28, 16, .18) 52%, rgba(40, 28, 16, 0) 70%); }
+  .trio { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 40px; }
+  .header { grid-template-columns: auto 1fr; }
+  .logo { height: 44px; }
+  .menu-btn { display: inline-flex; }
+  .nav { position: absolute; left: 0; right: 0; top: 100%; flex-direction: column; align-items: stretch; gap: 0; padding: 6px var(--gutter) 18px; background: var(--paper); border-bottom: 1px solid var(--line); max-height: calc(100vh - var(--header-h) - 40px); overflow-y: auto; }
+  .nav:not(.is-open) { display: none; }
+  .nav > a, .nav__top { font-family: var(--serif); font-size: 1.75rem; letter-spacing: -.03em; padding-block: 10px; border-top: 1px solid var(--line); display: flex; }
+  .nav > a::after, .nav__top::after, .nav__top svg { display: none; }
+  .drop { position: static; opacity: 1; visibility: visible; transform: none; border: 0; padding: 0 0 10px 18px; min-width: 0; }
+  .drop li, .drop li + li { border: 0; padding-block: 4px; justify-content: flex-start; }
+  .info { grid-template-columns: minmax(0, 1fr); }
+  .info > div, .info > div:first-child, .info > div:last-child { padding-inline: 0; }
+  .info > div + div { border-left: 0; border-top: 1px solid var(--line); }
+  .part { grid-template-columns: minmax(0, 1fr); }
+  .part__label { position: static; padding: 0 0 22px; }
+  .part__label p { max-width: 52ch; }
+  .footer__cols { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .join { grid-column: 1 / -1; max-width: 520px; }
+}
+@media (max-width: 720px) {
+  .announce { font-size: .875rem; padding-block: 10px; letter-spacing: .02em; }
+  .hero { height: auto; background: var(--paper); color: var(--ink); }
+  .hero::after { display: none; }
+  .hero__bg { position: relative; display: block; }
+  .hero__bg img { position: static; height: auto; aspect-ratio: 930 / 1280; }
+  .hero__bg::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 30%; background: linear-gradient(to bottom, rgba(255, 255, 255, 0), var(--paper)); }
+  .hero__body { position: relative; transform: none; width: auto; left: auto; top: auto; margin-top: -54px; padding: 0 var(--gutter) 34px; }
+  .hero__note { color: var(--ink-soft); }
+  .hero__ctas { width: 100%; flex-direction: column; }
+  .hero__cta { width: 100%; height: 60px; background: var(--ink); border-color: var(--ink); color: var(--chalk); }
+  .hero__cta--wa { background: transparent; color: var(--ink); border-color: var(--ink); -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .tools .cur, .tools .tool--wa { display: none; }
+  .tools { gap: 12px; }
+  .nav__prefs { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 14px 4px; border-top: 1px solid var(--line); }
+  .trio { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 40px; }
+  .col__head { flex-direction: column; align-items: flex-start; gap: 4px; }
+  .col__head h2 { font-size: 1.875rem; }
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .card__add { left: 8px; right: auto; bottom: 8px; width: 42px; height: 42px; border-radius: 50%; }
+  .card__add b { display: none; }
+  .card__wish { top: 6px; right: 6px; }
+  .tab { font-size: 1.3125rem; }
+  .guide__row { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+  .guide__row--head { display: none; }
+  .story, .order, .gloss { grid-template-columns: minmax(0, 1fr); }
+  .sheet { height: auto; max-height: 92vh; }
+  .sheet[open] { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto; overflow-y: auto; }
+  .sheet__media { height: min(52vh, 100vw); }
+  .sheet__body { overflow: visible; }
+  .footer__cols address { grid-column: 1 / -1; }
+  .rail__btn { width: 46px; height: 46px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: .01ms !important; }
+  .marquee__track { animation: none; }
+}
+</style>
+
+<p class="announce"><a data-wa="jakarta" href="#" target="_blank" rel="noopener">In Jakarta? Order on WhatsApp for same-day delivery.</a></p>
+
+<header class="header" id="top">
+  <a class="logo" href="#home" aria-label="Yare Collection, home"><img src="img/logo.png" alt="Yare Collection" width="784" height="321"></a>
+
+  <nav class="nav" id="nav" aria-label="Main">
+    <div class="nav__item">
+      <a class="nav__top link" href="#shop" data-nav="shop">Collections <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 4.200 6 8.200l4-4"/></svg></a>
+      <ul class="drop" aria-label="Collections">
+        <li><a class="link" href="#shop">All pieces</a><span data-count="all"></span></li>
+        <li><a class="link" href="#shop-necklaces">Necklaces</a><span data-count="necklaces"></span></li>
+        <li><a class="link" href="#shop-bracelets">Bracelets</a><span data-count="bracelets"></span></li>
+        <li><a class="link" href="#shop-sets">Sets</a><span data-count="sets"></span></li>
+        <li><a class="link" href="#shop-brooches">Brooches</a><span data-count="brooches"></span></li>
+      </ul>
+    </div>
+    <a class="link" href="#guide" data-nav="guide">Guide</a>
+    <a class="link" href="#about" data-nav="about">About</a>
+    <a class="link" href="#contact" data-nav="contact">Contact</a>
+    <div class="nav__prefs"><span>Currency</span><label class="cur"><select data-cur aria-label="Currency"><option value="IDR">IDR</option><option value="USD">USD</option><option value="SGD">SGD</option></select></label></div>
+  </nav>
+
+  <div class="tools">
+    <div class="lang" role="group" aria-label="Language"><button type="button" data-lang="en" aria-pressed="true">EN</button><button type="button" data-lang="id" aria-pressed="false">ID</button></div>
+    <label class="cur"><select data-cur aria-label="Currency"><option value="IDR">IDR</option><option value="USD">USD</option><option value="SGD">SGD</option></select></label>
+    <a class="tool" href="#saved" aria-label="Saved pieces">
+      <svg viewBox="0 0 30 30" aria-hidden="true"><path d="M15 25.500S4 19 4 11.300C4 7.800 6.700 5.500 9.600 5.500c2.300 0 4.200 1.300 5.400 3.300 1.200-2 3.100-3.300 5.400-3.300 2.900 0 5.600 2.300 5.600 5.800C26 19 15 25.500 15 25.500Z"/></svg>
+      <span class="wish__n" id="wishCount" hidden>0</span>
+    </a>
+    <a class="tool tool--wa" data-pick data-wa="general" href="#" target="_blank" rel="noopener" aria-label="Chat with Yare on WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 19.5 5.6 16A8 8 0 1 1 8.300 18.700L4.500 19.500Z"/><path d="M9 10.500h6M9 13.500h4"/></svg></a>
+    <button class="tool menu-btn" type="button" id="menuBtn" aria-controls="nav" aria-expanded="false" aria-label="Menu">
+      <svg viewBox="0 0 30 30" aria-hidden="true"><path d="M4 10.500h22M4 19.500h22"/></svg>
+    </button>
+  </div>
+</header>
+
+<!-- ═════════ HOME ═════════ -->
+<main id="viewHome">
+  <section class="hero">
+    <picture class="hero__bg">
+      <source media="(max-width: 720px)" srcset="img/hero.jpg" width="930" height="1280">
+      <img src="img/hero-wide.jpg" alt="A strand of white pearls on a light bronze bust, in soft window light" width="3072" height="1280">
+    </picture>
+    <div class="hero__body">
+      <h1 class="hero__title serif">Worn with Intention</h1>
+      <p class="hero__note">Pearls and natural stones, strung by hand</p>
+      <div class="hero__ctas">
+        <a class="hero__cta" href="#shop">Shop the Collection <svg viewBox="0 0 18 18" aria-hidden="true"><path d="M2 9h13.500M10.500 4 15.500 9l-5 5"/></svg></a>
+        <a class="hero__cta hero__cta--wa" data-pick data-wa="jakarta" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 19.5 5.6 16A8 8 0 1 1 8.300 18.700L4.500 19.500Z"/><path d="M9 10.500h6M9 13.500h4"/></svg>Order on WhatsApp</a>
+      </div>
+      <p class="hero__local">Same-day delivery in Jakarta via GoSend &amp; GrabExpress</p>
+    </div>
+  </section>
+
+  <section class="trio" aria-label="Collections">
+    <article class="col">
+      <div class="col__head"><h2 class="serif">Necklaces</h2><a class="link small" href="#shop-necklaces"><span data-count="necklaces"></span> pieces</a></div>
+      <button class="col__media" type="button" data-open="17" aria-label="View Zigzag Pearl Necklace"><img src="img/p17.jpg" alt="A zigzag strand of white pearls worn at the collarbone" width="720" height="960"></button>
+      <button class="col__name" type="button" data-open="17">Zigzag Pearl Necklace</button>
+      <p class="col__text">Pearls are believed to open the aura of beauty and charisma.</p>
+      <p class="intent">Intention: <a href="#intent-beauty">Beauty</a></p>
+    </article>
+    <article class="col">
+      <div class="col__head"><h2 class="serif">Bracelets</h2><a class="link small" href="#shop-bracelets"><span data-count="bracelets"></span> pieces</a></div>
+      <button class="col__media" type="button" data-open="7" aria-label="View Three-Strand White Pearl Bracelet"><img src="img/p07.jpg" alt="Three strands of white pearls on a wrist, closed with a gold drawstring clasp" width="720" height="960"></button>
+      <button class="col__name" type="button" data-open="7">Three-Strand White Pearl Bracelet</button>
+      <p class="col__text">Three rows of white pearls on titanium, closed with a drawstring clasp.</p>
+      <p class="intent">Intention: <a href="#intent-beauty">Beauty</a></p>
+    </article>
+    <article class="col">
+      <div class="col__head"><h2 class="serif">Sets</h2><a class="link small" href="#shop-sets"><span data-count="sets"></span> pieces</a></div>
+      <button class="col__media" type="button" data-open="12" aria-label="View Pearl &amp; Agate Set"><img src="img/p12.jpg" alt="A pearl and agate Y-necklace on a linen bust with its matching bracelet" width="720" height="960"></button>
+      <button class="col__name" type="button" data-open="12">Pearl &amp; Agate Set</button>
+      <p class="col__text">Matching necklaces and bracelets, made to be worn together.</p>
+      <p class="intent">Intention: <a href="#intent-beauty">Beauty</a> &amp; <a href="#intent-calm">Calm</a></p>
+    </article>
+    <article class="col">
+      <div class="col__head"><h2 class="serif">Brooches</h2><a class="link small" href="#shop-brooches"><span data-count="brooches"></span> piece</a></div>
+      <button class="col__media" type="button" data-open="19" aria-label="View Pearl Shell Brooch"><img src="img/p19.jpg" alt="A pearl shell flower brooch in its Yare Collection gift box" width="720" height="960"></button>
+      <button class="col__name" type="button" data-open="19">Pearl Shell Brooch</button>
+      <p class="col__text">Pearl shell is believed to calm and to steady the emotions.</p>
+      <p class="intent">Intention: <a href="#intent-calm">Calm</a></p>
+    </article>
+  </section>
+
+  <section class="info" aria-label="About the collection">
+    <div>
+      <h2 class="serif">Shop by Intention</h2>
+      <ul class="intents" id="intentList"></ul>
+    </div>
+    <div>
+      <h2 class="serif">Natural Materials</h2>
+      <ul class="mats">
+        <li>
+          <svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="13"/><path d="M14.500 18.500a8.500 8.500 0 0 1 6-5"/></svg>
+          <div><h3>Pearls and pearl shell</h3><p>In white, pink and mixed colours, from single strands to three-strand cuffs.</p></div>
+        </li>
+        <li>
+          <svg viewBox="0 0 44 44" aria-hidden="true"><path d="M22 6 34 15l-4 18H14l-4-18L22 6Z"/><path d="M10 15h24M22 6l-5 9 5 18 5-18-5-9"/></svg>
+          <div><h3>Natural stones</h3><p>Agate, fluorite, garnet, jade, onyx, tiger’s eye, rose gravel, red siam stone and crystal.</p></div>
+        </li>
+        <li>
+          <svg viewBox="0 0 44 44" aria-hidden="true"><rect x="5" y="16" width="16" height="12" rx="6"/><rect x="23" y="16" width="16" height="12" rx="6"/><path d="M17 22h10"/></svg>
+          <div><h3>Titanium</h3><p>Chains and clasps in white or yellow titanium.</p></div>
+        </li>
+      </ul>
+    </div>
+    <div class="story-teaser">
+      <h2 class="serif">Our Artisan Story</h2>
+      <p>Each Yare piece is handcrafted by skilled artisans across Indonesia, then chosen and bought by two people who travel the islands themselves.</p>
+      <p class="muted small">The catalogue keeps the Indonesian terms for each technique: susun, simpul, rajut, serut.</p>
+      <a class="link" href="#about">Read the story and the process</a>
+    </div>
+  </section>
+</main>
+
+<!-- ═════════ COLLECTION PAGES (all / necklaces / bracelets / sets / brooches) ═════════ -->
+<main id="viewShop" hidden>
+  <header class="phead">
+    <div class="phead__text">
+      <p class="phead__eyebrow">Yare Collection · 2026</p>
+      <h1 class="serif" id="collTitle"></h1>
+      <p class="phead__intro" id="collIntro"></p>
+      <p class="phead__meta" id="collMeta"></p>
+    </div>
+    <div class="phead__media"><img id="collImg" src="img/f34.jpg" alt=""></div>
+  </header>
+
+  <div class="filters">
+    <div class="filters__row" id="tabs" role="group" aria-label="Collection"></div>
+    <div class="filters__row" id="chips" role="group" aria-label="Wellness intention"></div>
+  </div>
+
+  <ul class="grid" id="grid" aria-live="polite"></ul>
+
+  <div class="next">
+    <p>Not sure which stone is yours?</p>
+    <a class="link" href="#guide">Read the Natural Materials &amp; Intention Guide</a>
+  </div>
+</main>
+
+<!-- ═════════ GUIDE ═════════ -->
+<main id="viewGuide" hidden>
+  <header class="phead">
+    <div class="phead__text">
+      <p class="phead__eyebrow">Guide</p>
+      <h1 class="serif">Natural Materials &amp; Intention Guide</h1>
+      <p class="phead__intro">What each stone is believed to bring, in the words of the Yare catalogue. These are traditional beliefs, not medical advice.</p>
+    </div>
+  </header>
+
+  <section class="part part--line">
+    <div class="part__label">
+      <h2 class="serif">Choose by intention</h2>
+      <p>Start from what you want to carry with you. Each intention opens the pieces made with its stones.</p>
+    </div>
+    <div class="part__body" id="intentRows"></div>
+  </section>
+
+  <section class="part">
+    <div class="part__label">
+      <h2 class="serif">Stone by stone</h2>
+      <p>Every material in the collection and its believed benefit.</p>
+    </div>
+    <div class="part__body" id="guideBody"></div>
+  </section>
+
+  <section class="part">
+    <div class="part__label">
+      <h2 class="serif">Natural materials</h2>
+      <p>What a Yare piece is made of.</p>
+    </div>
+    <div class="part__body">
+      <ul class="mats">
+        <li>
+          <svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="13"/><path d="M14.500 18.500a8.500 8.500 0 0 1 6-5"/></svg>
+          <div><h3>Pearls and pearl shell</h3><p>In white, pink and mixed colours, from single strands to three-strand cuffs.</p></div>
+        </li>
+        <li>
+          <svg viewBox="0 0 44 44" aria-hidden="true"><path d="M22 6 34 15l-4 18H14l-4-18L22 6Z"/><path d="M10 15h24M22 6l-5 9 5 18 5-18-5-9"/></svg>
+          <div><h3>Natural stones</h3><p>Agate, fluorite, garnet, jade, onyx, tiger’s eye, rose gravel, red siam stone, turquoise and crystal.</p></div>
+        </li>
+        <li>
+          <svg viewBox="0 0 44 44" aria-hidden="true"><rect x="5" y="16" width="16" height="12" rx="6"/><rect x="23" y="16" width="16" height="12" rx="6"/><path d="M17 22h10"/></svg>
+          <div><h3>Titanium</h3><p>Chains and clasps in white or yellow titanium.</p></div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="next">
+    <p>Ready to choose?</p>
+    <a class="link" href="#shop">See the whole collection</a>
+  </div>
+</main>
+
+<!-- ═════════ ABOUT ═════════ -->
+<main id="viewAbout" hidden>
+  <header class="phead">
+    <div class="phead__text">
+      <p class="phead__eyebrow">About</p>
+      <h1 class="serif">The Artisan Story &amp; Process</h1>
+      <p class="phead__intro">Handcrafted pearl and gemstone jewellery, found across Indonesia and shared with the world.</p>
+    </div>
+    <div class="phead__media" style="--ar: 900 / 918"><img src="img/f13.jpg" alt="A pearl and agate necklace on a linen bust, with spools of thread and a wooden drawer chest behind it" width="900" height="918"></div>
+  </header>
+
+  <section class="part part--line">
+    <div class="part__label">
+      <h2 class="serif">Our journey</h2>
+    </div>
+    <div class="part__body">
+      <div class="story">
+        <div class="story__text">
+          <p class="story__lead">Inspired by our travels across Bali and many regions of Indonesia, we discovered extraordinary craftsmanship and made it our mission to share it with the world.</p>
+          <p>We travel together, meet the artisans, personally select each pearl and gemstone, and source carefully chosen materials from different places across Indonesia.</p>
+          <p>We then transform these pearls and stones into unique and beautiful pieces of jewelry. The story of this process is our own story.</p>
+          <p>Rose quartz symbolizes self-love, fluorite represents a clear mind, and pearl shell evokes tranquility. Each product features its signature stone and its meaning, so you can choose jewelry for both its symbolism and its beauty.</p>
+        </div>
+        <div class="story__photo"><img src="img/about-us.jpg" alt="A man and a woman sitting close together at a stone table, both wearing woven bracelets, with pearls, woven bracelets and raw gemstones laid out in front of them" width="1000" height="1340" loading="lazy"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="part">
+    <div class="part__label">
+      <h2 class="serif">Our artisans</h2>
+    </div>
+    <div class="part__body">
+      <div class="story__text">
+        <p>Every piece is handcrafted by our team of artisans in the workshop, from the stones and pearls we choose. Their work draws on skilled craft from all over the archipelago, reaching far beyond traditional Balinese jewellery, so our pieces reflect a rich mosaic of Indonesian heritage.</p>
+        <p>Almost everything is finished on titanium, in a white or a yellow tone, with an extension chain so one bracelet fits most wrists.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="part">
+    <div class="part__label">
+      <h2 class="serif">The craft, in its own words</h2>
+      <p>The catalogue names each technique and design in Indonesian. This is what they mean.</p>
+    </div>
+    <div class="part__body">
+      <dl class="gloss" style="margin-top:0">
+        <div><dt>Polos</dt><dd>Plain. A single clean row of pearls.</dd></div>
+        <div><dt>Susun</dt><dd>Stacked. Two or three strands worn as one.</dd></div>
+        <div><dt>Simpul</dt><dd>Knotted. Strands tied into a centre knot.</dd></div>
+        <div><dt>Rajut</dt><dd>Woven. Stones worked into a braided cord.</dd></div>
+        <div><dt>Serut</dt><dd>Drawstring. A sliding clasp that adjusts to the wrist.</dd></div>
+        <div><dt>Kerikil</dt><dd>Gravel. Small tumbled chips of stone.</dd></div>
+        <div><dt>Model anggur</dt><dd>Grape design. Chips clustered along a chain.</dd></div>
+        <div><dt>Model bunga</dt><dd>Flower design. Pearls gathered into blossoms.</dd></div>
+        <div><dt>Model lampion</dt><dd>Lantern design. A rounded pearl centrepiece.</dd></div>
+        <div><dt>Model kacamata</dt><dd>Figure-eight design. Two loops, like a pair of glasses.</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="part">
+    <div class="part__label">
+      <h2 class="serif">Where to find us</h2>
+    </div>
+    <div class="part__body">
+      <div class="story__text">
+        <p>Explore our handcrafted gemstone and pearl collections online, or find us featured across our retail partner locations.</p>
+        <p>Our necklaces are on the shelves at five Pepito locations in Bali:</p>
+      </div>
+      <ul class="stores">
+        <li>
+          <div><span>Pepito Market</span><b class="serif">Echo Beach</b><address>Jl. Pantai Batu Bolong, Canggu, Kec. Kuta Utara, Kabupaten Badung, Bali 80351</address></div>
+          <a class="btn btn--line" href="https://www.google.com/maps/search/?api=1&amp;query=Pepito+Market+Echo+Beach%2C+Jl.+Pantai+Batu+Bolong%2C+Canggu%2C+Kec.+Kuta+Utara%2C+Kabupaten+Badung%2C+Bali+80351" target="_blank" rel="noopener">Open in Maps</a>
+        </li>
+        <li>
+          <div><span>Pepito Market</span><b class="serif">Seminyak</b><address>Jl. Raya Kerobokan, Kerobokan Kelod, Kec. Kuta Utara, Kabupaten Badung, Bali 80361</address></div>
+          <a class="btn btn--line" href="https://www.google.com/maps/search/?api=1&amp;query=Pepito+Market+Seminyak%2C+Jl.+Raya+Kerobokan%2C+Kerobokan+Kelod%2C+Kec.+Kuta+Utara%2C+Kabupaten+Badung%2C+Bali+80361" target="_blank" rel="noopener">Open in Maps</a>
+        </li>
+        <li>
+          <div><span>Pepito Express</span><b class="serif">Pantai Kuta</b><address>Jl. Pantai Kuta No.32, Legian, Kec. Kuta, Kabupaten Badung, Bali</address></div>
+          <a class="btn btn--line" href="https://www.google.com/maps/search/?api=1&amp;query=Pepito+Express+Pantai+Kuta%2C+Jl.+Pantai+Kuta+No.32%2C+Legian%2C+Kec.+Kuta%2C+Kabupaten+Badung%2C+Bali" target="_blank" rel="noopener">Open in Maps</a>
+        </li>
+        <li>
+          <div><span>Pepito Express</span><b class="serif">Ramayana</b><address>Jl. Kartika Plaza, Kuta, Kec. Kuta, Kabupaten Badung, Bali 80361</address></div>
+          <a class="btn btn--line" href="https://www.google.com/maps/search/?api=1&amp;query=Pepito+Express+Ramayana%2C+Jl.+Kartika+Plaza%2C+Kuta%2C+Kec.+Kuta%2C+Kabupaten+Badung%2C+Bali+80361" target="_blank" rel="noopener">Open in Maps</a>
+        </li>
+        <li>
+          <div><span>Pepito Market</span><b class="serif">Dewi Sri Legian</b><address>Jl. Dewi Sri No.9B, Legian, Kec. Kuta, Kabupaten Badung, Bali 80361</address></div>
+          <a class="btn btn--line" href="https://www.google.com/maps/search/?api=1&amp;query=Pepito+Market+Dewi+Sri+Legian%2C+Jl.+Dewi+Sri+No.9B%2C+Legian%2C+Kec.+Kuta%2C+Kabupaten+Badung%2C+Bali+80361" target="_blank" rel="noopener">Open in Maps</a>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="next">
+    <p>See the work itself</p>
+    <a class="link" href="#shop-bracelets">The Bracelet Collection</a>
+  </div>
+</main>
+
+<!-- ═════════ CONTACT / ORDERING ═════════ -->
+<main id="viewContact" hidden>
+  <header class="phead">
+    <div class="phead__text">
+      <p class="phead__eyebrow">Contact</p>
+      <h1 class="serif">Ordering &amp; Information</h1>
+      <p class="phead__intro">Yare takes orders by WhatsApp, Instagram and email. Choose a piece, send a message, and Yare will reply to confirm availability and shipping.</p>
+      <p class="phead__meta">We reply within 12–24 hours.</p>
+    </div>
+    <div class="phead__media" style="--ar: 1086 / 1448"><img src="img/f21.jpg" alt="A pearl necklace and bracelet set beside a Yare Collection box" width="1086" height="1448"></div>
+  </header>
+
+  <section class="part part--line">
+    <div class="part__label">
+      <h2 class="serif">How to order</h2>
+      <p>Every piece in the collection has an “Order on WhatsApp” button that opens a chat with the piece already named.</p>
+    </div>
+    <div class="part__body">
+      <ul class="ways">
+        <li>
+          <p class="ways__label">WhatsApp</p>
+          <p class="ways__num"><span class="ways__value">+62 822-2543-9186</span><span class="ways__where">Indonesia</span></p>
+          <p class="ways__num"><span class="ways__value">+1 (574) 500-7128</span><span class="ways__where">USA</span></p>
+          <p class="ways__note">Two numbers, one in Indonesia and one in the USA. Both reach Yare.</p>
+          <div class="ways__row"><a class="btn" data-wa="general" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 19.5 5.6 16A8 8 0 1 1 8.300 18.700L4.500 19.500Z"/><path d="M9 10.500h6M9 13.500h4"/></svg>WhatsApp Indonesia (+62)</a><a class="btn btn--line" data-wa="general" data-num="us" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 19.5 5.6 16A8 8 0 1 1 8.300 18.700L4.500 19.500Z"/><path d="M9 10.500h6M9 13.500h4"/></svg>WhatsApp USA (+1)</a></div>
+        </li>
+        <li>
+          <p class="ways__label">Instagram</p>
+          <p class="ways__value">@yare.craft</p>
+          <p class="ways__note">New pieces appear here first. Send a direct message to order.</p>
+          <a class="btn btn--line" href="https://ig.me/m/yare.craft" target="_blank" rel="noopener">Message on Instagram</a>
+        </li>
+        <li>
+          <p class="ways__label">Email</p>
+          <p class="ways__value" id="mailAddr">info@yarecraft.com</p>
+          <p class="ways__note">For custom orders, gifts and wholesale questions. We reply within 12–24 hours.</p>
+          <div class="ways__row"><a class="btn btn--line" href="mailto:info@yarecraft.com">Write an email</a><button class="btn btn--quiet" type="button" data-copy="info@yarecraft.com">Copy address</button></div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="part">
+    <div class="part__label">
+      <h2 class="serif">Custom order form</h2>
+      <p>Fill this in and send it by WhatsApp or email. Nothing is sent until you press send in the app that opens.</p>
+    </div>
+    <div class="part__body">
+      <form class="form form--wide" id="orderForm" novalidate>
+        <div class="form__grid">
+          <div class="field"><label for="oName">Name *</label><input id="oName" name="name" autocomplete="name" required></div>
+          <div class="field"><label for="oPhone">Phone</label><input id="oPhone" name="phone" type="tel" autocomplete="tel"></div>
+          <div class="field"><label for="oEmail">Email</label><input id="oEmail" name="email" type="email" autocomplete="email"></div>
+          <div class="field"><label for="oAddress">Delivery address</label><input id="oAddress" name="address" autocomplete="street-address"></div>
+        </div>
+        <div class="field"><label for="oPieces">Pieces you would like</label><textarea id="oPieces" name="pieces" rows="3" placeholder="For example: No. 07 Three-Strand White Pearl Bracelet"></textarea><p class="field__hint" id="oPiecesHint"></p></div>
+        <div class="field"><label for="oMsg">Message</label><textarea id="oMsg" name="message" rows="3" placeholder="Sizes, colours, a gift note, or a custom request"></textarea></div>
+        <button class="btn" type="submit">Prepare my order</button>
+        <p class="form__msg" id="orderMsg" role="status"></p>
+        <div class="form__send" id="orderSend" hidden>
+          <a class="btn" id="sendWa" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 19.5 5.6 16A8 8 0 1 1 8.300 18.700L4.500 19.500Z"/><path d="M9 10.500h6M9 13.500h4"/></svg>Send on WhatsApp</a>
+          <a class="btn btn--line" id="sendMail" href="#">Send by email</a>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <section class="part">
+    <div class="part__label">
+      <h2 class="serif">Information</h2>
+    </div>
+    <div class="part__body">
+      <div class="twocol">
+        <div>
+          <h3>Shipping information</h3>
+          <p class="shipline"><b>Jakarta:</b> same-day delivery by GoSend or GrabExpress. Order on WhatsApp to arrange it.</p>
+          <p class="shipline"><b>Other cities and abroad:</b> Yare confirms the courier and the shipping cost in the chat.</p>
+          <p class="shipline"><a class="link" href="#policies">Authenticity, returns &amp; exchanges</a></p>
+          <p class="draft"><b>Draft.</b> Payment methods and the cut-off time for same-day orders will be listed here once Yare supplies them.</p>
+        </div>
+        <div>
+          <h3>Contact</h3>
+          <dl class="contactlist">
+            <div><dt>WhatsApp</dt><dd>+62 822-2543-9186 (Indonesia)</dd></div>
+            <div><dt>WhatsApp</dt><dd>+1 (574) 500-7128 (USA)</dd></div>
+            <div><dt>Email</dt><dd>info@yarecraft.com</dd></div>
+            <div><dt>Instagram</dt><dd><a class="link" href="https://www.instagram.com/yare.craft/" target="_blank" rel="noopener">@yare.craft</a></dd></div>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ═════════ POLICIES ═════════ -->
+<main id="viewPolicies" hidden>
+  <header class="phead">
+    <div class="phead__text">
+      <p class="phead__eyebrow">Policies</p>
+      <h1 class="serif">Authenticity &amp; Returns</h1>
+      <p class="phead__intro">What we guarantee about every piece, and what to do if something is not right.</p>
+    </div>
+    <div class="phead__media" style="--ar: 1086 / 1448"><img src="img/f45.jpg" alt="A bracelet of round green and black jade beads on pale stone in sunlight" width="1086" height="1448" loading="lazy"></div>
+  </header>
+
+  <section class="part part--line">
+    <div class="part__label">
+      <h2 class="serif">Authenticity &amp; certificates</h2>
+    </div>
+    <div class="part__body">
+      <ul class="policy">
+        <li><h3>Genuine materials</h3><p>Every piece is made with genuine pearls and natural stones, bought from trusted artisans and suppliers across Indonesia.</p></li>
+        <li><h3>Jade grading</h3><p>Each jade piece is named with its grade. Type A jade is natural and untreated. Type C jadeite has been colour-treated.</p></li>
+        <li><h3>Certificates on request</h3><p>A gemological certificate can be arranged for eligible pieces. Ask us on WhatsApp or by email before you order. Lab fees and extra time may apply, depending on the lab.</p></li>
+        <li><h3>Natural variation</h3><p>Small differences in colour, grain and texture are part of natural, handmade jewellery and a sign of its authentic origin.</p></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="part">
+    <div class="part__label">
+      <h2 class="serif">Returns &amp; exchanges</h2>
+    </div>
+    <div class="part__body">
+      <ul class="policy">
+        <li><h3>14 days</h3><p>Start a return or exchange within 14 days of receiving your order.</p></li>
+        <li><h3>Condition</h3><p>The piece must be unworn and in its original condition, with its packaging, pouch and any certificate.</p></li>
+        <li><h3>Final sale</h3><p>Custom, personalised or resized pieces, and pieces that show wear, damage or changes after delivery.</p></li>
+        <li><h3>How to return</h3><ol><li>Message us on WhatsApp or email info@yarecraft.com with your order details and the reason.</li><li>Once approved, we send you return instructions.</li><li>Return shipping is paid by the customer, unless the piece arrived damaged or incorrect.</li></ol></li>
+        <li><h3>Refunds</h3><p>Once we receive and check the piece, we refund your original payment method within 5–7 business days. Original shipping fees are not refunded.</p></li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="next">
+    <p>Questions about a piece?</p>
+    <a class="link" href="#contact">Contact us</a>
+  </div>
+</main>
+
+<div class="night">
+  <div id="homeNight">
+    <div class="marquee" aria-label="Yare Collection, pearls and natural stones">
+      <div class="marquee__track" aria-hidden="true">
+        <div class="marquee__group"><span>Pearls &amp; Natural Stones</span><i></i><span>Yare Collection</span><i></i><span>Pearls &amp; Natural Stones</span><i></i><span>Yare Collection</span><i></i></div>
+        <div class="marquee__group"><span>Pearls &amp; Natural Stones</span><i></i><span>Yare Collection</span><i></i><span>Pearls &amp; Natural Stones</span><i></i><span>Yare Collection</span><i></i></div>
+      </div>
+    </div>
+
+    <section class="studio" aria-labelledby="studioTitle">
+      <div class="studio__head">
+        <h2 class="serif" id="studioTitle">From the Catalogue</h2>
+        <a class="link" href="#shop">View all <span data-count="all"></span></a>
+      </div>
+      <div class="studio__wrap">
+        <ul class="rail" id="rail" tabindex="0" aria-label="Pieces from the catalogue"></ul>
+        <button class="rail__btn rail__btn--prev" type="button" id="railPrev" aria-label="Previous pieces" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.500 7.500 12l7.500 7.500"/></svg></button>
+        <button class="rail__btn rail__btn--next" type="button" id="railNext" aria-label="More pieces"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 4.500 7.500 7.500L9 19.500"/></svg></button>
+      </div>
+    </section>
+    <div class="rule"></div>
+  </div>
+
+  <footer class="footer" id="footer">
+    <div class="footer__cols">
+      <ul>
+        <li><a class="link" href="#home">Home</a></li>
+        <li><a class="link" href="#shop">Collections</a></li>
+        <li><a class="link" href="#guide">Guide</a></li>
+        <li><a class="link" href="#about">About</a></li>
+        <li><a class="link" href="#contact">Contact</a></li>
+        <li><a class="link" href="#policies">Policies</a></li>
+      </ul>
+      <ul>
+        <li><a class="link" href="#shop-necklaces">Necklaces</a></li>
+        <li><a class="link" href="#shop-bracelets">Bracelets</a></li>
+        <li><a class="link" href="#shop-sets">Sets</a></li>
+        <li><a class="link" href="#shop-brooches">Brooches</a></li>
+        <li><a class="link" href="#guide">Shop by Intention</a></li>
+        <li><a class="link" href="#contact">Ordering</a></li>
+      </ul>
+      <address>
+        WhatsApp +62 822-2543-9186<br>
+        WhatsApp USA +1 (574) 500-7128<br>
+        info@yarecraft.com<br>
+        Instagram @yare.craft
+      </address>
+      <div class="join">
+        <h2>Stay in touch</h2>
+        <p>New pieces go up on Instagram first. For orders and questions, message Yare on WhatsApp.</p>
+        <div class="join__row">
+          <a class="submit" href="https://www.instagram.com/yare.craft/" target="_blank" rel="noopener">Follow @yare.craft</a>
+          <a class="submit" data-wa="general" href="#" target="_blank" rel="noopener">WhatsApp Indonesia (+62)</a>
+          <a class="submit" data-wa="general" data-num="us" href="#" target="_blank" rel="noopener">WhatsApp USA (+1)</a>
+        </div>
+      </div>
+    </div>
+
+    <p class="wordmark" aria-hidden="true">Yare Collection</p>
+
+    <div class="footer__base">
+      <ul class="social">
+        <li><a class="link" href="https://www.instagram.com/yare.craft/" target="_blank" rel="noopener">Instagram</a></li>
+        <li><a class="link" data-wa="general" href="#" target="_blank" rel="noopener">WhatsApp</a></li>
+        <li><a class="link" data-wa="general" data-num="us" href="#" target="_blank" rel="noopener">WhatsApp USA</a></li>
+        <li><a class="link" href="mailto:info@yarecraft.com">info@yarecraft.com</a></li>
+      </ul>
+      <small>© 2026 Yare Collection</small>
+    </div>
+  </footer>
+</div>
+
+<dialog class="sheet" id="sheet" aria-labelledby="sheetTitle">
+  <button class="sheet__close" type="button" id="sheetClose" aria-label="Close"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="m3 3 12 12M15 3 3 15"/></svg></button>
+  <div class="sheet__media" id="sheetMedia"></div>
+  <div class="sheet__body" id="sheetBody"></div>
+</dialog>
+
+<a class="wa-float" data-pick data-wa="general" href="#" target="_blank" rel="noopener" aria-label="Chat with Yare on WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 19.5 5.6 16A8 8 0 1 1 8.300 18.700L4.500 19.500Z"/><path d="M9 10.500h6M9 13.500h4"/></svg><span>Chat with us</span></a>
+
+<dialog class="pick" id="waPick" aria-labelledby="pickTitle">
+  <button class="sheet__close" type="button" id="pickClose" aria-label="Close"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="m3 3 12 12M15 3 3 15"/></svg></button>
+  <h2 class="serif" id="pickTitle">Chat with Yare</h2>
+  <p class="pick__note">Choose a number. Both reach Yare.</p>
+  <div class="pick__row">
+    <a class="btn" id="pickId" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 19.5 5.6 16A8 8 0 1 1 8.300 18.700L4.500 19.500Z"/><path d="M9 10.500h6M9 13.500h4"/></svg>WhatsApp Indonesia (+62)</a>
+    <a class="btn btn--line" id="pickUs" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 19.5 5.6 16A8 8 0 1 1 8.300 18.700L4.500 19.500Z"/><path d="M9 10.500h6M9 13.500h4"/></svg>WhatsApp USA (+1)</a>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var store = {
+    get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  };
+
+  /* ── Bahasa Indonesia: English text → Indonesian. Used for the page copy and for everything the script writes. ── */
+  var ID = {
+    // header, menu, footer
+    'Collections': 'Koleksi', 'All pieces': 'Semua produk', 'Necklaces': 'Kalung', 'Bracelets': 'Gelang', 'Sets': 'Set', 'Brooches': 'Bros',
+    'Guide': 'Panduan', 'About': 'Tentang', 'Contact': 'Kontak', 'Home': 'Beranda', 'Ordering': 'Pemesanan', 'Menu': 'Menu',
+    'Saved pieces': 'Produk tersimpan', 'Chat with Yare on WhatsApp': 'Chat dengan Yare di WhatsApp', 'Language': 'Bahasa', 'Currency': 'Mata uang',
+    'Chat with us': 'Chat dengan kami', 'Close': 'Tutup',
+    'Same-day delivery in Jakarta via GoSend & GrabExpress': 'Pengiriman di hari yang sama untuk Jakarta via GoSend & GrabExpress',
+    'Order on WhatsApp': 'Pesan via WhatsApp',
+    // hero
+    'Worn with Intention': 'Dikenakan dengan Makna',
+    'Pearls and natural stones, strung by hand': 'Mutiara dan batu alam, dirangkai dengan tangan',
+    'Shop the Collection': 'Lihat Koleksi',
+    'In Jakarta? Order on WhatsApp for same-day delivery.': 'Di Jakarta? Pesan via WhatsApp, sampai di hari yang sama.',
+    'A strand of white pearls on a light bronze bust, in soft window light': 'Seuntai mutiara putih pada patung perunggu muda, di bawah cahaya jendela yang lembut',
+    // home
+    'pieces': 'produk', 'piece': 'produk', 'Intention:': 'Makna:',
+    'Pearls are believed to open the aura of beauty and charisma.': 'Mutiara dipercaya membuka aura kecantikan dan karisma.',
+    'Three rows of white pearls on titanium, closed with a drawstring clasp.': 'Tiga untai mutiara putih pada titanium, dengan pengait serut.',
+    'Matching necklaces and bracelets, made to be worn together.': 'Kalung dan gelang serasi, dibuat untuk dipakai bersama.',
+    'Pearl shell is believed to calm and to steady the emotions.': 'Kerang mutiara dipercaya menenangkan dan menstabilkan emosi.',
+    'Beauty': 'Kecantikan', 'Calm': 'Ketenangan', 'Focus': 'Fokus', 'Love': 'Cinta', 'Protection': 'Perlindungan',
+    'Shop by Intention': 'Pilih Berdasarkan Makna', 'Natural Materials': 'Bahan Alami',
+    'Pearls and pearl shell': 'Mutiara dan kerang mutiara',
+    'In white, pink and mixed colours, from single strands to three-strand cuffs.': 'Dalam warna putih, merah muda dan campuran, dari satu untai hingga tiga susun.',
+    'Natural stones': 'Batu alam',
+    'Agate, fluorite, rose gravel, red siam stone and crystal.': 'Akik, fluorit, kerikil rose, batu merah siam, dan kristal.',
+    'Agate, fluorite, rose gravel, red siam stone, turquoise and crystal.': 'Akik, fluorit, kerikil rose, batu merah siam, pirus, dan kristal.',
+    'Titanium': 'Titanium', 'Chains and clasps in white or yellow titanium.': 'Rantai dan pengait dari titanium putih atau kuning.',
+    'Our Artisan Story': 'Kisah Pengrajin Kami',
+    'Each Yare piece is handcrafted by skilled artisans across Indonesia, then chosen and bought by two people who travel the islands themselves.': 'Setiap perhiasan Yare dibuat dengan tangan oleh pengrajin terampil di seluruh Indonesia, lalu dipilih dan dibeli langsung oleh dua orang yang menjelajahi pulau-pulaunya.',
+    'The catalogue keeps the Indonesian terms for each technique: susun, simpul, rajut, serut.': 'Katalog memakai istilah Indonesia untuk setiap teknik: susun, simpul, rajut, serut.',
+    'Agate, fluorite, jade, onyx, rose gravel, red siam stone and crystal.': 'Akik, fluorit, giok, onyx, kerikil rose, batu merah siam, dan kristal.',
+    'Agate, fluorite, jade, onyx, rose gravel, red siam stone, turquoise and crystal.': 'Akik, fluorit, giok, onyx, kerikil rose, batu merah siam, pirus, dan kristal.',
+    'Read the story and the process': 'Baca kisah dan prosesnya',
+    'Pearls & Natural Stones': 'Mutiara & Batu Alam', 'From the Catalogue': 'Dari Katalog', 'View all': 'Lihat semua',
+    'Previous pieces': 'Sebelumnya', 'More pieces': 'Berikutnya', 'Pieces from the catalogue': 'Produk dari katalog',
+    // collection pages
+    'Not sure which stone is yours?': 'Belum yakin batu mana yang cocok?',
+    'Read the Natural Materials & Intention Guide': 'Baca Panduan Bahan Alami & Makna',
+    'Wellness intention': 'Makna', 'Collection': 'Koleksi', 'Any': 'Semua', 'Saved': 'Tersimpan', 'All': 'Semua',
+    'The 2026 Collection': 'Koleksi 2026', 'The Necklace Collection': 'Koleksi Kalung', 'The Bracelet Collection': 'Koleksi Gelang',
+    'The Set Collection': 'Koleksi Set', 'The Brooch Collection': 'Koleksi Bros', 'Saved Pieces': 'Produk Tersimpan',
+    'Every piece in the catalogue: pearl strands, gravel-stone bracelets, sets and a brooch.': 'Semua produk di katalog: untaian mutiara, gelang batu kerikil, set, dan bros.',
+    'Three pearl necklaces: a zigzag strand, a plain white strand, and one in mixed pearl shell.': 'Tiga kalung mutiara: model zigzag, mutiara putih polos, dan kerang mutiara campuran.',
+    'Pearl strands, gravel-stone clusters and woven drawstring cords. Most close with a titanium clasp and an extension chain.': 'Untaian mutiara, rangkaian batu kerikil, dan tali rajut serut. Sebagian besar memakai pengait titanium dan rantai sambungan.',
+    'A pearl shell flower brooch that arrives in its own Yare Collection box.': 'Bros bunga kerang mutiara, dikirim dalam kotak Yare Collection.',
+    'The pieces you marked with a heart.': 'Produk yang kamu tandai dengan hati.',
+    // guide
+    'Natural Materials & Intention Guide': 'Panduan Bahan Alami & Makna',
+    'What each stone is believed to bring, in the words of the Yare catalogue. These are traditional beliefs, not medical advice.': 'Apa yang dipercaya dibawa oleh setiap batu, menurut katalog Yare. Ini kepercayaan tradisional, bukan saran medis.',
+    'Choose by intention': 'Pilih berdasarkan makna',
+    'Start from what you want to carry with you. Each intention opens the pieces made with its stones.': 'Mulai dari apa yang ingin kamu bawa. Setiap makna membuka produk dengan batunya.',
+    'Stone by stone': 'Batu demi batu', 'Every material in the collection and its believed benefit.': 'Setiap bahan di koleksi dan manfaat yang dipercaya.',
+    'Natural materials': 'Bahan alami', 'What a Yare piece is made of.': 'Bahan pembuat perhiasan Yare.',
+    'Ready to choose?': 'Siap memilih?', 'See the whole collection': 'Lihat seluruh koleksi',
+    'Material': 'Bahan', 'Intention': 'Makna', 'Believed benefit': 'Manfaat yang dipercaya', 'Pieces': 'Produk',
+    // about
+    'The Artisan Story & Process': 'Kisah & Proses Pengrajin',
+    'Handcrafted pearl and gemstone jewellery, found across Indonesia and shared with the world.': 'Perhiasan mutiara dan batu permata buatan tangan, ditemukan di seluruh Indonesia dan dibagikan ke dunia.',
+    'Our journey': 'Perjalanan kami', 'Our artisans': 'Pengrajin kami', 'Where to find us': 'Temukan kami',
+    'Inspired by our travels across Bali and many regions of Indonesia, we discovered extraordinary craftsmanship and made it our mission to share it with the world.': 'Terinspirasi oleh perjalanan kami melintasi Bali dan berbagai daerah di Indonesia, kami menemukan keahlian tangan yang luar biasa dan menjadikannya misi kami untuk membagikannya ke dunia.',
+    'We travel together, meet the artisans, personally select each pearl and gemstone, and source carefully chosen materials from different places across Indonesia.': 'Kami bepergian bersama, bertemu para pengrajin, memilih sendiri setiap mutiara dan batu permata, dan mencari bahan-bahan pilihan dari berbagai tempat di Indonesia.',
+    'We then transform these pearls and stones into unique and beautiful pieces of jewelry. The story of this process is our own story.': 'Kami kemudian mengubah mutiara dan batu ini menjadi perhiasan yang unik dan indah. Kisah proses ini adalah kisah kami sendiri.',
+    'Every piece is handcrafted by our team of artisans in the workshop, from the stones and pearls we choose. Their work draws on skilled craft from all over the archipelago, reaching far beyond traditional Balinese jewellery, so our pieces reflect a rich mosaic of Indonesian heritage.': 'Setiap perhiasan dibuat dengan tangan oleh tim pengrajin kami di workshop, dari batu dan mutiara pilihan kami. Karyanya bersumber dari keterampilan di seluruh nusantara, jauh melampaui perhiasan tradisional Bali, sehingga karya kami mencerminkan mosaik warisan budaya Indonesia yang kaya.',
+    'Explore our handcrafted gemstone and pearl collections online, or find us featured across our retail partner locations.': 'Jelajahi koleksi batu permata dan mutiara buatan tangan kami secara online, atau temukan kami di berbagai toko mitra.',
+    'Our necklaces are on the shelves at five Pepito locations in Bali:': 'Kalung kami ada di lima lokasi Pepito di Bali:',
+    'Open in Maps': 'Buka di Maps',
+    'Chat with Yare': 'Chat dengan Yare', 'Choose a number. Both reach Yare.': 'Pilih nomor. Keduanya langsung ke Yare.',
+    'We reply within 12–24 hours.': 'Kami membalas dalam 12–24 jam.',
+    'For custom orders, gifts and wholesale questions. We reply within 12–24 hours.': 'Untuk pesanan khusus, hadiah, dan pertanyaan grosir. Kami membalas dalam 12–24 jam.',
+    'Tiger’s Eye': 'Mata Harimau', 'Natural Garnet': 'Garnet Alami', 'Dzi Bead': 'Manik Dzi',
+    'Jadeite is believed to bring luck, protection and harmony.': 'Jadeite dipercaya membawa keberuntungan, perlindungan, dan keharmonisan.',
+    'Deep, rich garnet, known for symbolising vitality, passion and grounded strength.': 'Garnet alami yang dalam dan berkilau, dikenal melambangkan vitalitas, semangat, dan kekuatan yang membumi.',
+    'A traditional amulet bead. Together with tiger’s eye, it is believed to offer protection, grounding and energy alignment.': 'Manik jimat tradisional. Bersama mata harimau, dipercaya memberi perlindungan, membumikan, dan menyelaraskan energi.',
+    'Sterling silver wire': 'Kawat perak sterling',
+    'Turquoise Matrix': 'Pirus Matrix',
+    'Natural turquoise with its matrix, the dark veining of the host rock, so every stone is unique. Hand wire-wrapped in Indonesia, it is believed to bring protection, calm and good fortune.': 'Pirus alami lengkap dengan matriks, yaitu guratan gelap dari batuan induknya, sehingga setiap batu unik. Dililit kawat dengan tangan di Indonesia, dipercaya membawa perlindungan, ketenangan, dan keberuntungan.',
+    'Refined metal chain': 'Rantai logam pilihan',
+    'Clear Quartz': 'Kristal Kuarsa Bening', 'Citrine': 'Citrine',
+    'Known as a master healing stone, clear quartz is believed to amplify energy, sharpen clarity of mind and bring a sense of calm.': 'Dikenal sebagai batu penyembuh utama, kuarsa bening dipercaya memperkuat energi, mempertajam kejernihan pikiran, dan membawa rasa tenang.',
+    'A warm, radiant stone linked to confidence and joy, believed to bring light and positive energy to the wearer.': 'Batu yang hangat dan bercahaya, dikaitkan dengan rasa percaya diri dan kebahagiaan, dipercaya membawa cahaya dan energi positif bagi pemakainya.',
+    'Agate, fluorite, garnet, jade, onyx, tiger’s eye, rose gravel, red siam stone and crystal.': 'Akik, fluorit, garnet, giok, onyx, mata harimau, kerikil rose, batu merah siam, dan kristal.',
+    'Agate, fluorite, garnet, jade, onyx, tiger’s eye, rose gravel, red siam stone, turquoise and crystal.': 'Akik, fluorit, garnet, giok, onyx, mata harimau, kerikil rose, batu merah siam, pirus, dan kristal.',
+    'Policies': 'Kebijakan', 'Authenticity & Returns': 'Keaslian & Pengembalian',
+    'What we guarantee about every piece, and what to do if something is not right.': 'Apa yang kami jamin untuk setiap produk, dan apa yang perlu dilakukan kalau ada yang kurang sesuai.',
+    'Authenticity & certificates': 'Keaslian & sertifikat', 'Returns & exchanges': 'Pengembalian & penukaran',
+    'Genuine materials': 'Bahan asli',
+    'Every piece is made with genuine pearls and natural stones, bought from trusted artisans and suppliers across Indonesia.': 'Setiap produk dibuat dari mutiara asli dan batu alam, dibeli dari pengrajin dan pemasok tepercaya di seluruh Indonesia.',
+    'Jade grading': 'Grade giok',
+    'Each jade piece is named with its grade. Type A jade is natural and untreated. Type C jadeite has been colour-treated.': 'Setiap produk giok mencantumkan grade-nya. Giok Tipe A alami dan tanpa perlakuan. Jadeite Tipe C sudah melalui pewarnaan.',
+    'Certificates on request': 'Sertifikat sesuai permintaan',
+    'A gemological certificate can be arranged for eligible pieces. Ask us on WhatsApp or by email before you order. Lab fees and extra time may apply, depending on the lab.': 'Sertifikat gemologi bisa diurus untuk produk tertentu. Tanyakan lewat WhatsApp atau email sebelum memesan. Biaya dan waktu tambahan dari laboratorium mungkin berlaku.',
+    'Natural variation': 'Variasi alami',
+    'Small differences in colour, grain and texture are part of natural, handmade jewellery and a sign of its authentic origin.': 'Perbedaan kecil pada warna, serat, dan tekstur adalah bagian dari perhiasan alami buatan tangan dan tanda keasliannya.',
+    '14 days': '14 hari', 'Start a return or exchange within 14 days of receiving your order.': 'Ajukan pengembalian atau penukaran dalam 14 hari setelah pesanan diterima.',
+    'Condition': 'Kondisi', 'The piece must be unworn and in its original condition, with its packaging, pouch and any certificate.': 'Produk harus belum dipakai dan dalam kondisi asli, lengkap dengan kemasan, kantong, dan sertifikat bila ada.',
+    'Final sale': 'Tidak bisa dikembalikan', 'Custom, personalised or resized pieces, and pieces that show wear, damage or changes after delivery.': 'Produk pesanan khusus, personalisasi, atau yang ukurannya diubah, serta produk yang sudah terpakai, rusak, atau diubah setelah diterima.',
+    'How to return': 'Cara mengembalikan',
+    'Message us on WhatsApp or email info@yarecraft.com with your order details and the reason.': 'Hubungi kami lewat WhatsApp atau email info@yarecraft.com dengan detail pesanan dan alasannya.',
+    'Once approved, we send you return instructions.': 'Setelah disetujui, kami kirimkan petunjuk pengembalian.',
+    'Return shipping is paid by the customer, unless the piece arrived damaged or incorrect.': 'Ongkos kirim pengembalian ditanggung pembeli, kecuali produk datang rusak atau salah.',
+    'Refunds': 'Pengembalian dana',
+    'Once we receive and check the piece, we refund your original payment method within 5–7 business days. Original shipping fees are not refunded.': 'Setelah produk kami terima dan periksa, dana dikembalikan ke metode pembayaran awal dalam 5–7 hari kerja. Ongkos kirim awal tidak dikembalikan.',
+    'Questions about a piece?': 'Ada pertanyaan tentang produk?', 'Contact us': 'Hubungi kami',
+    'Message on Instagram': 'Kirim DM di Instagram',
+    'Authenticity, returns & exchanges': 'Keaslian, pengembalian & penukaran', 'Authenticity & returns': 'Keaslian & pengembalian',
+    'Two numbers, one in Indonesia and one in the USA. Both reach Yare.': 'Dua nomor, satu di Indonesia dan satu di Amerika Serikat. Keduanya langsung ke Yare.',
+    'The craft, in its own words': 'Kerajinan, dalam istilahnya sendiri',
+    'Listed in US dollars. Yare confirms the final price in rupiah.': 'Harga tercantum dalam dolar AS. Yare akan mengonfirmasi harga akhir dalam rupiah.',
+    'Pearl necklaces in a zigzag strand, plain white and pearl shell, one in jadeite and black onyx, and a wire-wrapped turquoise pendant.': 'Kalung mutiara model zigzag, putih polos, dan kerang mutiara, satu kalung jadeite dan onyx hitam, serta liontin pirus berlilit kawat.',
+    'Type C Jadeite': 'Jadeite Tipe C', 'Black Onyx': 'Onyx Hitam', 'Type A Jade': 'Giok Tipe A',
+    'The donut shape is called Ping An Kou, a traditional charm of safety and peace. Jadeite is believed to bring luck, protection and harmony.': 'Bentuk donat ini disebut Ping An Kou, jimat tradisional pembawa keselamatan dan kedamaian. Jadeite dipercaya membawa keberuntungan, perlindungan, dan keharmonisan.',
+    'Black onyx is believed to protect, give strength, and ground the wearer by absorbing negative energy.': 'Onyx hitam dipercaya melindungi, memberi kekuatan, dan menenangkan pemakainya dengan menyerap energi negatif.',
+    'Jade is believed to bring luck and protection, balance the emotions and support a calm, harmonious life. In Chinese tradition it also stands for prosperity and long life.': 'Giok dipercaya membawa keberuntungan dan perlindungan, menyeimbangkan emosi, dan mendukung hidup yang tenang dan harmonis. Dalam tradisi Tionghoa, giok juga melambangkan kemakmuran dan umur panjang.',
+    'Rose quartz symbolizes self-love, fluorite represents a clear mind, and pearl shell evokes tranquility. Each product features its signature stone and its meaning, so you can choose jewelry for both its symbolism and its beauty.': 'Kuarsa merah muda melambangkan cinta diri, fluorit mewakili pikiran yang jernih, dan kerang mutiara membangkitkan ketenangan. Setiap produk menampilkan batu khasnya dan maknanya, sehingga kamu bisa memilih perhiasan berdasarkan makna sekaligus keindahannya.',
+    'Almost everything is finished on titanium, in a white or a yellow tone, with an extension chain so one bracelet fits most wrists.': 'Hampir semuanya memakai titanium, warna putih atau kuning, dengan rantai sambungan agar satu gelang pas di sebagian besar pergelangan.',
+    'Draft.': 'Draf.',
+    "This text is written from the catalogue only. The maker's name, the workshop location and where the pearls come from still need to be supplied by Yare.": 'Teks ini ditulis dari katalog saja. Nama pengrajin, lokasi workshop, dan asal mutiara masih perlu dilengkapi oleh Yare.',
+    "The process, in the makers' words": 'Prosesnya, dalam istilah pengrajin',
+    'The catalogue names each technique and design in Indonesian. This is what they mean.': 'Katalog menamai setiap teknik dan model dalam bahasa Indonesia. Ini artinya.',
+    'Plain. A single clean row of pearls.': 'Satu untai mutiara yang rapi.',
+    'Stacked. Two or three strands worn as one.': 'Dua atau tiga untai yang dipakai sebagai satu.',
+    'Knotted. Strands tied into a centre knot.': 'Untaian diikat menjadi simpul di tengah.',
+    'Woven. Stones worked into a braided cord.': 'Batu dirajut ke dalam tali kepang.',
+    'Drawstring. A sliding clasp that adjusts to the wrist.': 'Pengait geser yang bisa disesuaikan dengan pergelangan.',
+    'Gravel. Small tumbled chips of stone.': 'Serpihan batu kecil yang dipoles.',
+    'Grape design. Chips clustered along a chain.': 'Serpihan batu bergerombol di sepanjang rantai.',
+    'Flower design. Pearls gathered into blossoms.': 'Mutiara dirangkai menjadi bunga.',
+    'Lantern design. A rounded pearl centrepiece.': 'Hiasan tengah mutiara yang membulat.',
+    'Figure-eight design. Two loops, like a pair of glasses.': 'Dua lingkaran, seperti bentuk kacamata.',
+    'See the work itself': 'Lihat hasil karyanya',
+    // contact
+    'Ordering & Information': 'Pemesanan & Informasi',
+    'Yare takes orders by WhatsApp, Instagram and email. Choose a piece, send a message, and Yare will reply to confirm availability and shipping.': 'Yare menerima pesanan lewat WhatsApp, Instagram, dan email. Pilih produk, kirim pesan, dan Yare akan membalas untuk konfirmasi stok dan pengiriman.',
+    'How to order': 'Cara memesan',
+    'Every piece in the collection has an “Order on WhatsApp” button that opens a chat with the piece already named.': 'Setiap produk punya tombol “Pesan via WhatsApp” yang membuka chat dengan nama produk sudah terisi.',
+    'The quickest way to order or ask about a piece.': 'Cara tercepat untuk memesan atau bertanya.',
+    'Chat on WhatsApp': 'Chat via WhatsApp', 'Open Instagram': 'Buka Instagram',
+    'New pieces appear here first. Send a direct message to order.': 'Produk baru muncul di sini lebih dulu. Kirim DM untuk memesan.',
+    'For custom orders, gifts and wholesale questions.': 'Untuk pesanan khusus, hadiah, dan pertanyaan grosir.',
+    'Write an email': 'Tulis email', 'Copy address': 'Salin alamat',
+    'Custom order form': 'Formulir pesanan',
+    'Fill this in and send it by WhatsApp or email. Nothing is sent until you press send in the app that opens.': 'Isi formulir ini lalu kirim lewat WhatsApp atau email. Tidak ada yang terkirim sebelum kamu menekan kirim di aplikasi yang terbuka.',
+    'Name *': 'Nama *', 'Phone': 'Telepon', 'Email': 'Email', 'Delivery address': 'Alamat pengiriman',
+    'Pieces you would like': 'Produk yang diinginkan', 'Message': 'Pesan',
+    'For example: No. 07 Three-Strand White Pearl Bracelet': 'Contoh: No. 07 Three-Strand White Pearl Bracelet',
+    'Sizes, colours, a gift note, or a custom request': 'Ukuran, warna, kartu ucapan, atau permintaan khusus',
+    'Prepare my order': 'Siapkan pesanan', 'Send on WhatsApp': 'Kirim via WhatsApp', 'Send by email': 'Kirim lewat email',
+    'Information': 'Informasi', 'Shipping information': 'Informasi pengiriman',
+    'Jakarta:': 'Jakarta:',
+    'same-day delivery by GoSend or GrabExpress. Order on WhatsApp to arrange it.': 'pengiriman di hari yang sama dengan GoSend atau GrabExpress. Pesan via WhatsApp untuk mengaturnya.',
+    'Other cities and abroad:': 'Kota lain dan luar negeri:',
+    'Yare confirms the courier and the shipping cost in the chat.': 'Yare akan mengonfirmasi kurir dan ongkos kirim di chat.',
+    'Payment methods and the cut-off time for same-day orders will be listed here once Yare supplies them.': 'Metode pembayaran dan batas jam pesan untuk pengiriman hari yang sama akan dicantumkan di sini setelah Yare melengkapinya.',
+    'Prices in other currencies are approximate. Yare confirms the final price in rupiah.': 'Harga dalam mata uang lain hanya perkiraan. Yare akan mengonfirmasi harga akhir dalam rupiah.',
+    // footer
+    'Stay in touch': 'Tetap terhubung',
+    'New pieces go up on Instagram first. For orders and questions, message Yare on WhatsApp.': 'Produk baru tampil di Instagram lebih dulu. Untuk pesanan dan pertanyaan, hubungi Yare di WhatsApp.',
+    'Follow @yare.craft': 'Ikuti @yare.craft',
+    // product sheet and cards
+    'Bracelet': 'Gelang', 'Necklace': 'Kalung', 'Set': 'Set', 'Brooch': 'Bros', 'New': 'Baru',
+    'Price on request': 'Harga lewat chat', 'Photo coming soon': 'Foto segera hadir', 'Model name': 'Nama model', 'Main stone': 'Batu utama', 'Main material': 'Bahan utama',
+    'Chain material': 'Bahan rantai', 'White titanium': 'Titanium putih', 'Yellow titanium': 'Titanium kuning',
+    'Catalogue name:': 'Nama di katalog:', 'New photo, not in the 2026 price list yet.': 'Foto baru, belum masuk daftar harga 2026.',
+    'Earlier catalogue name:': 'Nama di katalog lama:', 'Name and stone to be confirmed by Yare.': 'Nama dan batu akan dikonfirmasi oleh Yare.',
+    'Jakarta: same-day delivery via GoSend or GrabExpress.': 'Jakarta: bisa sampai di hari yang sama via GoSend atau GrabExpress.',
+    'Approximate price. Yare confirms the final price in rupiah.': 'Harga perkiraan. Yare akan mengonfirmasi harga akhir dalam rupiah.',
+    // stones
+    'Rose Gravel': 'Kerikil Rose', 'Fluorite Gravel': 'Kerikil Fluorit', 'Pearls': 'Mutiara', 'Maroon Gravel': 'Kerikil Maroon', 'Agate': 'Akik',
+    'Red Siam Stone': 'Batu Merah Siam', 'Pearl Shell': 'Kerang Mutiara', 'Natural Cutting Stone': 'Batu Alam Cutting', 'Crystal': 'Kristal',
+    'Turquoise Gravel': 'Kerikil Pirus', 'Tiger Stone': 'Batu Mata Harimau', 'Marjan': 'Marjan', 'Red Coral': 'Koral Merah', 'Tenun (handwoven cloth)': 'Tenun (kain tenun tangan)',
+    'Believed to increase self-love, improve relationships, and help with emotional healing. In addition, this stone is also claimed to open the heart chakra and provide peace.': 'Dipercaya meningkatkan rasa cinta pada diri sendiri, memperbaiki hubungan, dan membantu pemulihan emosi. Batu ini juga diyakini membuka cakra jantung dan memberi kedamaian.',
+    'Improve concentration, clear the mind, and facilitate the absorption of new information.': 'Meningkatkan konsentrasi, menjernihkan pikiran, dan memudahkan menyerap informasi baru.',
+    'Believed to open the aura of beauty and charisma, pearls are also widely used in skin care products because they contain antioxidants, amino acids, and minerals that are good for the skin.': 'Dipercaya membuka aura kecantikan dan karisma. Mutiara juga banyak dipakai dalam produk perawatan kulit karena mengandung antioksidan, asam amino, dan mineral yang baik untuk kulit.',
+    'Believed to have metaphysical and spiritual properties. Pearls, including maroon ones, are often associated with beauty, good luck, and protection.': 'Dipercaya memiliki sifat metafisik dan spiritual. Batu ini, termasuk yang berwarna maroon, sering dikaitkan dengan kecantikan, keberuntungan, dan perlindungan.',
+    'Provides a calming effect, stabilizes emotions, reduces stress, and transforms negative energy into positive energy.': 'Memberi efek menenangkan, menstabilkan emosi, mengurangi stres, dan mengubah energi negatif menjadi positif.',
+    'Agate is believed to have various benefits, from calming the mind and balancing emotional health to supporting physical health, such as helping digestive health.': 'Akik dipercaya memiliki banyak manfaat, dari menenangkan pikiran dan menyeimbangkan emosi hingga mendukung kesehatan fisik, seperti pencernaan.',
+    'Helps radiate the wearer’s aura so that it is easier to attract the sympathy and attention of other people.': 'Membantu memancarkan aura pemakainya sehingga lebih mudah menarik simpati dan perhatian orang lain.',
+    'Natural Cutting Stone is believed to radiate an aura of beauty.': 'Batu alam cutting dipercaya memancarkan aura kecantikan.',
+    'Crystal Stones are believed to calm the mind, improve focus, reduce stress, also for energy balance.': 'Batu kristal dipercaya menenangkan pikiran, meningkatkan fokus, mengurangi stres, dan menyeimbangkan energi.',
+    'Provides protection, brings good luck, and increases self-confidence. In terms of health, turquoise is believed to help maintain the health of the throat, lungs, heart, eyes, and brain.': 'Memberi perlindungan, membawa keberuntungan, dan meningkatkan rasa percaya diri. Dari sisi kesehatan, pirus dipercaya membantu menjaga kesehatan tenggorokan, paru-paru, jantung, mata, dan otak.',
+    'Increase courage and strength, to provide protection and balance the energy within. This stone is also believed to increase focus, clear thinking, and increase intuition.': 'Meningkatkan keberanian dan kekuatan, memberi perlindungan, dan menyeimbangkan energi dalam diri. Batu ini juga dipercaya meningkatkan fokus, kejernihan berpikir, dan intuisi.',
+    'Emotional balance, creativity and healing of the soul, protection and courage, physical health and healing.': 'Keseimbangan emosi, kreativitas dan pemulihan jiwa, perlindungan dan keberanian, serta kesehatan dan pemulihan fisik.',
+    'Believed to help overcome marital problems, bringing back love, harmony, understanding and peace in married life.': 'Dipercaya membantu mengatasi masalah rumah tangga, mengembalikan cinta, keharmonisan, pengertian, dan kedamaian dalam pernikahan.',
+    'The motifs, colors and patterns of woven fabrics reflect the richness of the culture and history of a region or tribe.': 'Motif, warna, dan pola kain tenun mencerminkan kekayaan budaya dan sejarah suatu daerah atau suku.'
+  };
+
+  /* ── language ── */
+  var LANG = store.get('yare-lang') === 'id' ? 'id' : 'en';
+  var t = function (s) { return LANG === 'id' && ID[s] != null ? ID[s] : s; };
+  var isID = function () { return LANG === 'id'; };
+
+  // remember the English copy of every translatable text and attribute already in the page
+  var TEXTS = [], ATTRS = [];
+  (function collect() {
+    var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, { acceptNode: function (n) {
+      var p = n.parentNode && n.parentNode.nodeName; if (p === 'SCRIPT' || p === 'STYLE') return NodeFilter.FILTER_REJECT;
+      return ID[n.nodeValue.trim()] != null ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
+    } });
+    var n; while ((n = walker.nextNode())) { var v = n.nodeValue, k = v.trim(); TEXTS.push({ n: n, k: k, a: v.slice(0, v.indexOf(k)), b: v.slice(v.indexOf(k) + k.length) }); }
+    document.querySelectorAll('[aria-label],[placeholder],img[alt]').forEach(function (el) {
+      ['aria-label', 'placeholder', 'alt'].forEach(function (a) { var v = el.getAttribute(a); if (v && ID[v] != null) ATTRS.push({ el: el, a: a, k: v }); });
+    });
+  })();
+  function applyStatic() {
+    TEXTS.forEach(function (x) { x.n.nodeValue = x.a + t(x.k) + x.b; });
+    ATTRS.forEach(function (x) { x.el.setAttribute(x.a, t(x.k)); });
+    document.documentElement.lang = LANG;
+    document.querySelectorAll('[data-lang]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.lang === LANG)); });
+  }
+
+  /* ── currency: prices are kept in rupiah; other currencies are shown as an approximation ── */
+  var CUR = {
+    IDR: { rate: 1 },
+    USD: { rate: 17900, sym: 'US$' },   // mid-market rate, mid October 2026
+    SGD: { rate: 13950, sym: 'S$' }
+  };
+  var CURRENCY = CUR[store.get('yare-cur')] ? store.get('yare-cur') : 'IDR';
+  var dots = function (v) { return String(v).replace(/\B(?=(\d{3})+(?!\d))/g, LANG === 'id' ? '.' : ','); };
+  var rp = function (v) { return v == null ? t('Price on request') : 'Rp ' + String(v).replace(/\B(?=(\d{3})+(?!\d))/g, '.'); };
+  var usdStr = function (p) { return 'US$' + p.usd.toFixed(2); };
+  var listPrice = function (p) { return p.usd != null ? usdStr(p) : rp(p.price); };
+  var moneyP = function (p) {
+    if (p.usd == null) return money(p.price);
+    if (CURRENCY === 'USD') return usdStr(p);
+    return money(p.price);
+  };
+  var money = function (v, bare) {
+    if (v == null) return t('Price on request');
+    var a = '';
+    if (CURRENCY === 'IDR') return a + rp(v);
+    var c = CUR[CURRENCY]; return a + c.sym + dots(Math.round(v / c.rate));
+  };
+
+  /* pieces whose photo was taken out of the site: the piece stays, with a quiet placeholder */
+  var NOPHOTO = { 11: true };
+  var phHtml = function () { return '<span class="ph">' + t('Photo coming soon') + '</span>'; };
+  var CHAT = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 19.5 5.6 16A8 8 0 1 1 8.300 18.700L4.500 19.500Z"/><path d="M9 10.500h6M9 13.500h4"/></svg>';
+  var WA_NUMBER = '6282225439186', WA_US = '15745007128';
+  var wa = function (text, num) { return 'https://wa.me/' + (num || WA_NUMBER) + '?text=' + encodeURIComponent(text); };
+  var WA_TEXT = {
+    general: { en: 'Hi Yare! I have a question about your collection.', id: 'Halo Yare! Saya mau tanya tentang koleksinya.' },
+    jakarta: { en: 'Hi Yare! I am in Jakarta and would like to order with same-day delivery.', id: 'Halo Yare! Saya di Jakarta dan mau pesan dengan pengiriman di hari yang sama.' }
+  };
+  var askText = function (p) {
+    var ok = (p.price != null || p.usd != null);
+    if (isID()) return ok ? 'Halo Yare! Saya mau pesan ' + (p.listed ? 'No. ' + pad(p.n) + ', ' : '') + p.name + ' (' + listPrice(p) + '). Apakah masih tersedia?' : 'Halo Yare! Saya tertarik dengan ' + (p.listed ? 'No. ' + pad(p.n) + ', ' : '') + p.name + (p.listed ? '' : ' (produk baru)') + '. Boleh info harganya?';
+    return ok ? 'Hi Yare! I would like to order ' + (p.listed ? 'No. ' + pad(p.n) + ', ' : '') + p.name + ' (' + listPrice(p) + '). Is it available?' : 'Hi Yare! I am interested in ' + (p.listed ? 'No. ' + pad(p.n) + ', ' : 'the ') + p.name + (p.listed ? '' : ' (new piece)') + '. Could you tell me the price?';
+  };
+  var HEART = '<svg viewBox="0 0 30 30" aria-hidden="true"><path d="M15 25.500S4 19 4 11.300C4 7.800 6.700 5.500 9.600 5.500c2.300 0 4.200 1.300 5.400 3.300 1.200-2 3.100-3.300 5.400-3.300 2.900 0 5.600 2.300 5.600 5.800C26 19 15 25.500 15 25.500Z"/></svg>';
+
+  /* ── data: [id, collection, type, model name, catalogue name, stones, price or null, photo w, photo h, chain, in 2026 price list] ── */
+  var ROWS = [[1,"bracelets","Bracelet","Rose Gravel Bracelet","GELANG KERIKIL ROSE GRAVEL TITANIUM",["rose"],250000,1024,1024,"Titanium",1],[2,"bracelets","Bracelet","Fluorite Gravel Bracelet","GELANG KERIKIL FLUORITE GRAVEL TITANIUM",["fluorite"],250000,1024,1024,"Titanium",1],[3,"bracelets","Bracelet","Plain Pearl Bracelet","GELANG MUTIARA POLOS TITANIUM",["pearl"],400000,1024,1024,"Titanium",1],[4,"bracelets","Bracelet","White & Pink Pearl Bracelet, S Design","GELANG MUTIARA PUTIH PINK MODEL S TITANIUM",["pearl"],400000,1024,1024,"Titanium",1],[5,"bracelets","Bracelet","Pink Pearl Bracelet, Lantern Design","GELANG MUTIARA PINK MODEL LAMPION TITANIUM",["pearl"],400000,1024,1024,"Titanium",1],[6,"bracelets","Bracelet","White Pearl Bracelet, Flower Design","GELANG MUTIARA PUTIH MODEL BUNGA TITANIUM",["pearl"],400000,1024,1024,"Titanium",1],[7,"bracelets","Bracelet","Three-Strand White Pearl Bracelet, Drawstring","GELANG MUTIARA PUTIH 3 SUSUN MODEL SERUT TITANIUM",["pearl"],400000,900,973,"Titanium",1],[8,"bracelets","Bracelet","White Pearl Bracelet, Zigzag Design","GELANG MUTIARA PUTIH MODEL ZIGZAG TITANIUM",["pearl"],350000,1093,900,"Titanium",1],[10,"bracelets","Bracelet","Rose Gravel Bracelet, Grape Design","GELANG KERIKIL ROSE GRAVEL MODEL ANGGUR, TITANIUM",["rose"],250000,1024,1024,"Titanium",1],[11,"bracelets","Bracelet","Fluorite Gravel Bracelet, Grape Design","GELANG KERIKIL FLUORITE GRAVEL MODEL ANGGUR, TITANIUM",["fluorite"],250000,896,1768,"Titanium",1],[12,"sets","Set","Pearl & Agate Set","Combination of pearls and agate stones, SET",["pearl","agate"],800000,900,1307,"",1],[13,"sets","Set","Pearl & Agate Set","Combination of pearls and agate stones, SET",["pearl","agate"],600000,900,918,"",1],[14,"sets","Set","Pearl & Red Siam Stone Set","COMBINATION OF PEARL AND RED SIAM STONE, SET",["pearl","siam"],825000,900,1177,"",1],[15,"sets","Set","Pearl Chain Set, White Titanium","MUTIARA RANTAI TITANIUM PUTIH, SET",["pearl"],650000,900,1061,"White titanium",1],[16,"sets","Set","Pearl Chain Set, Yellow Titanium","MUTIARA RANTAI TITANIUM KUNING, SET",["pearl"],700000,900,1170,"Yellow titanium",1],[17,"necklaces","Necklace","Zigzag Pearl Necklace","KALUNG MUTIARA MODEL ZIGZAG, TITANIUM",["pearl"],400000,935,1042,"Titanium",1],[18,"necklaces","Necklace","Plain White Pearl Necklace","KALUNG MUTIARA POLOS PUTIH",["pearl"],750000,900,1664,"",1],[19,"brooches","Brooch","Pearl Shell Brooch","BROS PEARL SHELL",["shell"],200000,1086,1448,"",1],[20,"sets","Set","Pearl Shell Set","PEARL SHELL, SET",["shell"],780000,1086,1448,"",1],[21,"sets","Set","Pearl Shell Set","PEARL SHELL, SET",["shell"],780000,1086,1448,"",1],[22,"bracelets","Bracelet","Shell Pearl Bracelet, Two-Strand Knot, Two-Tone","GELANG MUTIARA KERANG 2 SUSUN SIMPUL 2 WARNA, TITANIUM",["shell"],400000,1086,1448,"Titanium",1],[23,"bracelets","Bracelet","Shell Pearl Bracelet, Three-Strand, Mixed Colours","GELANG MUTIARA SHELL 3 SUSUN KOMBINASI WARNA, TITANIUM",["shell"],400000,1024,1024,"Titanium",1],[24,"bracelets","Bracelet","S Pearl Bracelet, Two-Strand, Plain","GELANG MUTIARA S 2 SUSUN POLOS, TITANIUM",["pearl"],400000,1086,1448,"Titanium",1],[25,"bracelets","Bracelet","Shell Pearl Bracelet, Mixed Colours, Figure-Eight Design","GELANG MUTIARA SHELL KOMBINASI WARNA MODEL KACAMATA, TITANIUM",["shell"],450000,1086,1448,"Titanium",1],[26,"bracelets","Bracelet","White S Pearl Bracelet, Mixed, S Design","GELANG MUTIARA S PUTIH KOMBINASI MODEL S, TITANIUM",["pearl"],400000,1086,1448,"Titanium",1],[27,"bracelets","Bracelet","White S Pearl Bracelet, Three-Strand","GELANG MUTIARA S PUTIH 3 SUSUN, TITANIUM",["pearl"],400000,1086,1448,"Titanium",1],[28,"bracelets","Bracelet","White S Pearl Bracelet, Two-Strand, Figure-Eight Design","GELANG MUTIARA PUTIH S 2 SUSUN MODEL KACAMATA, TITANIUM",["pearl"],450000,1086,1448,"Titanium",1],[29,"bracelets","Bracelet","Pink S Pearl Bracelet, Mixed","GELANG MUTIARA PINK S, KOMBINASI, TITANIUM",["pearl"],400000,1086,1448,"Titanium",1],[30,"bracelets","Bracelet","White S Pearl Bracelet, Plain Ball","MUTIARA PUTIH S POLOS BOLA, TITANIUM",["pearl"],385000,900,1818,"Titanium",1],[31,"necklaces","Necklace","Pearl Shell Necklace","KALUNG PEARL SHELL",["shell"],500000,994,900,"",1],[32,"bracelets","Bracelet","Woven Drawstring Bracelet, Mixed Agate","Gelang Rajut serut batu mix agate",["agate2"],250000,896,1195,"",1],[33,"bracelets","Bracelet","Drawstring Bracelet, Mixed Agate & Pearl","Gelang serut batu mix agate & mutiara",["pearl","agate"],250000,1373,1146,"",1],[34,"bracelets","Bracelet","Woven Drawstring Bracelet, Small Cut Stones","Gelang Rajut serut Mix Batu Cutting kecil",["cut"],300000,900,1257,"",1],[35,"bracelets","Bracelet","Woven Drawstring Bracelet, Small Cut Stones","Gelang Rajut serut Mix Batu Cutting kecil",["cut"],400000,1086,1448,"",1],[36,"bracelets","Bracelet","Crystal Bracelet","GELANG KRISTAL",["crystal"],125000,1448,1086,"",1],[37,"bracelets","Bracelet","Turquoise Gravel Bracelet","BATU KERIKIL (PIRUS)",["turquoise"],200000,1024,1024,"",0],[38,"bracelets","Bracelet","Tiger Stone Bracelet, Lion Charm","BATU KERIKIL (TIGER)",["tiger"],600000,896,1195,"",0],[39,"bracelets","Bracelet","Pearl & Marjan Bracelet","MUTIARA LOMBOK MIX BATU MERAH DELIMA",["pearl","marjan"],200000,896,1195,"",0],[40,"bracelets","Bracelet","Maluku Red Coral Bracelet","MALUKU RED CORAL",["coral"],500000,896,1195,"",0],[41,"bracelets","Bracelet","Tenun Bracelet","TENUN",["tenun"],200000,1612,900,"",0],[42,"bracelets","Bracelet","Red Braided Cord Bracelet","",[],200000,900,1200,"",0],[43,"bracelets","Bracelet","Beaded Drawstring Bracelet","",[],200000,900,900,"",0],[44,"necklaces","Necklace","Type C Jadeite Donut & Black Onyx Necklace","Type C Jadeite Donut & Polished Black Onyx Beaded Necklace",["pingan","onyx"],null,960,1280,"",1,29.99],[45,"bracelets","Bracelet","Genuine Type A Jade Bracelet","Genuine Type A jade (Batu Giok)",["jade"],null,1086,1448,"",1,39.99],[46,"bracelets","Bracelet","Natural Garnet Bracelet, Gold Spacers","Natural Garnet Bead Bracelet with Gold Spacers",["garnet"],null,1536,2048,"",1,19.99],[47,"bracelets","Bracelet","Type C Jadeite Bead Bracelet","Type C Jadeite Bracelet",["jadeite"],null,1199,1599,"",1,16.99],[48,"bracelets","Bracelet","Genuine Tiger’s Eye Bracelet, Dzi Bead","Genuine Tiger’s Eye Bracelet with Dzi Amulet Bead",["tiger","dzi"],null,900,1200,"",1,16.99],[49,"bracelets","Bracelet","Faceted Clear Quartz Bracelet","Faceted Clear Quartz, Sterling Silver Wire-Strung Bracelet",["clearquartz"],null,474,1024,"Sterling silver wire",1,29.99],[50,"bracelets","Bracelet","Golden Citrine Beaded Bracelet","Golden Citrine Crystal Beaded Bracelet",["citrine"],null,1200,1600,"",1,39.99],[51,"bracelets","Bracelet","Garnet Bracelet, Lotus Charm","The Awakening: Garnet and Lotus Bracelet",["garnet"],null,1086,1448,"",1,19.99],[52,"necklaces","Necklace","Turquoise Wire-Wrapped Pendant","The Earth & Spirit Wire-Wrapped Pendant Necklace",["turqmatrix"],null,1200,1600,"Refined metal chain",1,39.99]];
+  var STONES = {
+    rose:      { name: 'Rose Gravel', intents: ['Love'], text: 'Believed to increase self-love, improve relationships, and help with emotional healing. In addition, this stone is also claimed to open the heart chakra and provide peace.' },
+    fluorite:  { name: 'Fluorite Gravel', intents: ['Focus'], text: 'Improve concentration, clear the mind, and facilitate the absorption of new information.' },
+    pearl:     { name: 'Pearls', intents: ['Beauty'], text: 'Believed to open the aura of beauty and charisma, pearls are also widely used in skin care products because they contain antioxidants, amino acids, and minerals that are good for the skin.' },
+    maroon:    { name: 'Maroon Gravel', intents: ['Protection'], text: 'Believed to have metaphysical and spiritual properties. Pearls, including maroon ones, are often associated with beauty, good luck, and protection.' },
+    agate:     { name: 'Agate', intents: ['Calm'], text: 'Provides a calming effect, stabilizes emotions, reduces stress, and transforms negative energy into positive energy.' },
+    agate2:    { name: 'Agate', intents: ['Calm'], text: 'Agate is believed to have various benefits, from calming the mind and balancing emotional health to supporting physical health, such as helping digestive health.', alias: 'agate' },
+    siam:      { name: 'Red Siam Stone', intents: ['Beauty'], text: 'Helps radiate the wearer’s aura so that it is easier to attract the sympathy and attention of other people.' },
+    shell:     { name: 'Pearl Shell', intents: ['Calm'], text: 'Provides a calming effect, stabilizes emotions, reduces stress, and transforms negative energy into positive energy.' },
+    cut:       { name: 'Natural Cutting Stone', intents: ['Beauty'], text: 'Natural Cutting Stone is believed to radiate an aura of beauty.' },
+    crystal:   { name: 'Crystal', intents: ['Calm', 'Focus'], text: 'Crystal Stones are believed to calm the mind, improve focus, reduce stress, also for energy balance.' },
+    turquoise: { name: 'Turquoise Gravel', intents: ['Protection'], text: 'Provides protection, brings good luck, and increases self-confidence. In terms of health, turquoise is believed to help maintain the health of the throat, lungs, heart, eyes, and brain.' },
+    tiger:     { name: 'Tiger’s Eye', intents: ['Protection', 'Focus'], text: 'Increase courage and strength, to provide protection and balance the energy within. This stone is also believed to increase focus, clear thinking, and increase intuition.' },
+    marjan:    { name: 'Marjan', intents: ['Protection'], text: 'Emotional balance, creativity and healing of the soul, protection and courage, physical health and healing.' },
+    coral:     { name: 'Red Coral', intents: ['Love'], text: 'Believed to help overcome marital problems, bringing back love, harmony, understanding and peace in married life.' },
+    tenun:     { name: 'Tenun (handwoven cloth)', intents: [], text: 'The motifs, colors and patterns of woven fabrics reflect the richness of the culture and history of a region or tribe.', cloth: true },
+    jadeite:   { name: 'Type C Jadeite', intents: ['Protection'], text: 'Jadeite is believed to bring luck, protection and harmony.' },
+    pingan:    { name: 'Type C Jadeite', intents: ['Protection'], text: 'The donut shape is called Ping An Kou, a traditional charm of safety and peace. Jadeite is believed to bring luck, protection and harmony.', alias: 'jadeite' },
+    garnet:    { name: 'Natural Garnet', intents: ['Love'], text: 'Deep, rich garnet, known for symbolising vitality, passion and grounded strength.' },
+    dzi:       { name: 'Dzi Bead', intents: ['Protection'], text: 'A traditional amulet bead. Together with tiger’s eye, it is believed to offer protection, grounding and energy alignment.' },
+    clearquartz: { name: 'Clear Quartz', intents: ['Focus', 'Calm'], text: 'Known as a master healing stone, clear quartz is believed to amplify energy, sharpen clarity of mind and bring a sense of calm.' },
+    turqmatrix: { name: 'Turquoise Matrix', intents: ['Protection', 'Calm'], text: 'Natural turquoise with its matrix, the dark veining of the host rock, so every stone is unique. Hand wire-wrapped in Indonesia, it is believed to bring protection, calm and good fortune.' },
+    citrine:   { name: 'Citrine', intents: ['Beauty'], text: 'A warm, radiant stone linked to confidence and joy, believed to bring light and positive energy to the wearer.' },
+    onyx:      { name: 'Black Onyx', intents: ['Protection'], text: 'Black onyx is believed to protect, give strength, and ground the wearer by absorbing negative energy.' },
+    jade:      { name: 'Type A Jade', intents: ['Protection'], text: 'Jade is believed to bring luck and protection, balance the emotions and support a calm, harmonious life. In Chinese tradition it also stands for prosperity and long life.' }
+  };
+  var COLL = {
+    all:       { tab: 'All', title: 'The 2026 Collection', intro: 'Every piece in the catalogue: pearl strands, gravel-stone bracelets, sets and a brooch.', img: 'f34', ar: '900 / 1257', alt: 'A wooden tray stacked with woven drawstring bracelets' },
+    necklaces: { tab: 'Necklaces', title: 'The Necklace Collection', intro: 'Pearl necklaces in a zigzag strand, plain white and pearl shell, one in jadeite and black onyx, and a wire-wrapped turquoise pendant.', img: 'f17', ar: '935 / 1042', alt: 'A zigzag strand of white pearls worn at the collarbone' },
+    bracelets: { tab: 'Bracelets', title: 'The Bracelet Collection', intro: 'Pearl strands, gravel-stone clusters and woven drawstring cords. Most close with a titanium clasp and an extension chain.', img: 'f33', ar: '1373 / 1146', alt: 'Three drawstring bracelets of pearls and agate on marble' },
+    sets:      { tab: 'Sets', title: 'The Set Collection', intro: 'Matching necklaces and bracelets, made to be worn together.', img: 'f20', ar: '1086 / 1448', alt: 'A pearl necklace on a bust beside its matching bracelet and a Yare Collection box' },
+    brooches:  { tab: 'Brooches', title: 'The Brooch Collection', intro: 'A pearl shell flower brooch that arrives in its own Yare Collection box.', img: 'f19', ar: '1086 / 1448', alt: 'A pearl shell flower brooch in its Yare Collection gift box' }
+  };
+  var CAT_KEYS = ['all', 'necklaces', 'bracelets', 'sets', 'brooches'];
+  var INTENTS = ['Beauty', 'Calm', 'Focus', 'Love', 'Protection'];
+  var GUIDE_ORDER = ['pearl', 'shell', 'agate', 'rose', 'fluorite', 'maroon', 'siam', 'cut', 'crystal', 'turquoise', 'tiger', 'marjan', 'coral', 'garnet', 'jadeite', 'jade', 'onyx', 'dzi', 'turqmatrix', 'clearquartz', 'citrine', 'tenun'];
+  var RAIL = [46, 47, 48, 44, 45, 7, 17, 19, 12, 37];
+  var IMG_SRC = {
+    52: { p: 'https://static.wixstatic.com/media/6a1532_9aee469f04514648aa1a705c2dfd9472~mv2.jpg', f: 'https://static.wixstatic.com/media/6a1532_525c332d0f6848b7a951706c00ef178a~mv2.jpg' },
+    51: { p: 'https://static.wixstatic.com/media/6a1532_71c56a49a15543988259ebbcd835d8d5~mv2.jpg', f: 'https://static.wixstatic.com/media/6a1532_dd0d8c2223324aad94d784ec56aebe84~mv2.jpg' },
+    49: { p: 'https://static.wixstatic.com/media/6a1532_a628493ad8494adbaa5d3e6ab70480b6~mv2.jpg', f: 'https://static.wixstatic.com/media/6a1532_37d24528c98e49058391bc415621b3c1~mv2.jpg' },
+    50: { p: 'https://static.wixstatic.com/media/6a1532_84ee82cf39a94946a642b80766fe9d83~mv2.jpg', f: 'https://static.wixstatic.com/media/6a1532_75374c870b724262bb1dabe295b2862b~mv2.jpg' }
+  };
+  var srcOf = function (n, kind) { return (IMG_SRC[n] && IMG_SRC[n][kind]) || ('img/' + kind + pad(n) + '.jpg'); };
+
+  var P = ROWS.map(function (r) {
+    var intents = [];
+    r[5].forEach(function (s) { STONES[s].intents.forEach(function (i) { if (intents.indexOf(i) < 0) intents.push(i); }); });
+    return { n: r[0], cat: r[1], type: r[2], name: r[3], orig: r[4], stones: r[5], price: r[11] != null ? Math.round(r[11] * CUR.USD.rate / 5000) * 5000 : r[6], usd: r[11], w: r[7], h: r[8], chain: r[9], listed: r[10], intents: intents };
+  });
+  var byNo = {}; P.forEach(function (p) { byNo[p.n] = p; });
+
+  var pad = function (n) { return n < 10 ? '0' + n : '' + n; };
+  var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+  var stoneNames = function (p) { return p.stones.map(function (s) { return t(STONES[s].name); }).join(isID() ? ' dan ' : ' and '); };
+  var intentList = function (list, joiner) { return list.map(t).join(joiner); };
+  var label = function (p) { return (p.listed ? 'No. ' + pad(p.n) : t('New')) + ' · ' + t(p.type); };
+  var pieces = function (n) { return isID() ? n + ' produk' : n + ' piece' + (n === 1 ? '' : 's'); };
+  var inCat = function (cat) { return P.filter(function (p) { return cat === 'all' || p.cat === cat; }); };
+  var L = {
+    view: function (n) { return (isID() ? 'Lihat ' : 'View ') + n; },
+    save: function (n) { return (isID() ? 'Simpan ' : 'Save ') + n; },
+    order: function (n) { return isID() ? 'Pesan ' + n + ' via WhatsApp' : 'Order ' + n + ' on WhatsApp'; }
+  };
+
+  /* ── state ── */
+  var state = { cat: 'all', intent: null, saved: false, view: 'home' };
+  var wishes = {};
+  var count = function (obj) { return Object.keys(obj).length; };
+
+  var toast = $('toast'), toastTimer;
+  function say(text) { toast.textContent = text; toast.classList.add('is-on'); clearTimeout(toastTimer); toastTimer = setTimeout(function () { toast.classList.remove('is-on'); }, 2200); }
+
+  /* ── counts used in the menu and on the home page ── */
+  var catCount = {}; CAT_KEYS.forEach(function (c) { catCount[c] = inCat(c).length; });
+  document.querySelectorAll('[data-count]').forEach(function (el) { el.textContent = catCount[el.dataset.count]; });
+  var intentCount = function (i) { return P.filter(function (p) { return p.intents.indexOf(i) >= 0; }).length; };
+  function renderIntents() {
+    $('intentList').innerHTML = INTENTS.map(function (i) {
+      return '<li><a class="link" href="#intent-' + i.toLowerCase() + '">' + t(i) + '</a><span>' + pieces(intentCount(i)) + '</span></li>';
+    }).join('');
+  }
+
+  /* ── collection pages ── */
+  function matches(p) {
+    if (state.saved && !wishes[p.n]) return false;
+    if (state.cat !== 'all' && p.cat !== state.cat) return false;
+    if (state.intent && p.intents.indexOf(state.intent) < 0) return false;
+    return true;
+  }
+  function cardHTML(p) {
+    var sub = [stoneNames(p), intentList(p.intents, ' & ')].filter(Boolean).join(' · ');
+    return '<li class="card">' +
+      '<div class="card__media">' +
+        '<button class="card__open" type="button" data-open="' + p.n + '" aria-label="' + esc(L.view(p.name)) + '">' + (NOPHOTO[p.n] ? phHtml() : '<img src="' + srcOf(p.n, 'p') + '" alt="' + esc(p.name) + '" width="720" height="960" loading="lazy">') + '</button>' +
+        '<button class="card__wish" type="button" data-wish="' + p.n + '" aria-pressed="' + !!wishes[p.n] + '" aria-label="' + esc(L.save(p.name)) + '">' + HEART + '</button>' +
+        '<a class="card__add" data-pick role="button" tabindex="0" data-href="' + esc(wa(askText(p))) + '" aria-label="' + esc(L.order(p.name)) + '">' + CHAT + '<b>' + t('Order on WhatsApp') + '</b></a>' +
+      '</div>' +
+      '<p class="card__no">' + label(p) + '</p>' +
+      '<button class="card__name" type="button" data-open="' + p.n + '">' + esc(p.name) + '</button>' +
+      (sub ? '<p class="card__stone">' + sub + '</p>' : '') +
+      '<p class="card__price">' + moneyP(p) + '</p>' +
+    '</li>';
+  }
+  function renderHead() {
+    var c = COLL[state.cat], list = inCat(state.cat), priced = list.filter(function (p) { return p.price != null; }).map(function (p) { return p.price; });
+    var extra = list.length - priced.length;
+    $('collTitle').textContent = state.saved ? t('Saved Pieces') : t(c.title);
+    $('collIntro').textContent = state.saved ? t('The pieces you marked with a heart.') : t(c.intro);
+    var range = money(Math.min.apply(null, priced), true) + (isID() ? ' sampai ' : ' to ') + money(Math.max.apply(null, priced), true);
+    $('collMeta').textContent = state.saved ? pieces(count(wishes)) + (isID() ? ' tersimpan' : ' saved')
+      : pieces(list.length) + ', ' + range + (extra ? (isID() ? '. ' + extra + ' produk baru, harga lewat chat' : '. ' + extra + ' new, price on request') : '')
+        + (CURRENCY !== 'IDR' ? '. ' + t('Prices in other currencies are approximate. Yare confirms the final price in rupiah.') : '');
+    var img = $('collImg'); img.src = 'img/' + c.img + '.jpg'; img.alt = c.alt; img.parentNode.style.setProperty('--ar', c.ar);
+  }
+  function renderFilters() {
+    $('tabs').innerHTML = CAT_KEYS.map(function (k) {
+      return '<a class="tab" href="#' + (k === 'all' ? 'shop' : 'shop-' + k) + '"' + (state.cat === k && !state.saved ? ' aria-current="page"' : '') + '>' + t(COLL[k].tab) + '<sup>' + catCount[k] + '</sup></a>';
+    }).join('') + (count(wishes) ? '<a class="tab" href="#saved"' + (state.saved ? ' aria-current="page"' : '') + '>' + t('Saved') + '<sup>' + count(wishes) + '</sup></a>' : '');
+    $('chips').innerHTML = '<span class="filters__label">' + t('Wellness intention') + '</span>' +
+      '<button class="chip" type="button" data-intent="" aria-pressed="' + !state.intent + '">' + t('Any') + '</button>' +
+      INTENTS.map(function (i) { return '<button class="chip" type="button" data-intent="' + i + '" aria-pressed="' + (state.intent === i) + '">' + t(i) + '</button>'; }).join('');
+  }
+  function renderGrid() {
+    var list = P.filter(matches), grid = $('grid');
+    grid.classList.toggle('grid--few', list.length > 0 && list.length <= 3);
+    if (list.length) { grid.innerHTML = list.map(cardHTML).join(''); return; }
+    var it = state.intent ? t(state.intent) : '', what, hint, cta;
+    if (isID()) {
+      what = state.saved ? 'Belum ada produk tersimpan.' : 'Belum ada ' + (state.cat === 'all' ? 'produk' : t(COLL[state.cat].tab).toLowerCase()) + ' untuk ' + it + '.';
+      hint = state.saved ? 'Ketuk ikon hati pada produk untuk menyimpannya di sini.' : 'Coba makna lain, atau lihat semua produk untuk ' + it + '.';
+      cta = state.saved ? 'Lihat koleksi' : 'Lihat semua ' + it;
+    } else {
+      what = state.saved ? 'No saved pieces yet.' : 'No ' + (state.cat === 'all' ? 'pieces' : COLL[state.cat].tab.toLowerCase()) + ' for ' + it + ' yet.';
+      hint = state.saved ? 'Tap the heart on any piece to keep it here.' : 'Try another intention, or see every piece for ' + it + '.';
+      cta = state.saved ? 'Browse the collection' : 'Show all ' + it;
+    }
+    grid.innerHTML = '<li class="empty"><p>' + what + '</p><p class="muted">' + hint + '</p><a class="btn" href="#' + (state.saved ? 'shop' : 'intent-' + state.intent.toLowerCase()) + '">' + cta + '</a></li>';
+  }
+  function renderShop() { renderHead(); renderFilters(); renderGrid(); }
+  function settle() {
+    var bar = document.querySelector('.filters'), limit = bar.getBoundingClientRect().bottom, y = $('grid').getBoundingClientRect().top;
+    if (y < limit) window.scrollTo(0, window.scrollY + y - limit);
+  }
+
+  /* ── guide page ── */
+  var usesStone = function (k) { return P.filter(function (p) { return p.stones.some(function (x) { return x === k || STONES[x].alias === k; }); }).length; };
+  function renderGuide() {
+    $('intentRows').innerHTML = INTENTS.map(function (i) {
+      var stones = GUIDE_ORDER.filter(function (k) { return STONES[k].intents.indexOf(i) >= 0; }).map(function (k) { return t(STONES[k].name); });
+      return '<div class="irow"><h3>' + t(i) + '</h3><p>' + stones.join(', ') + '</p><a class="link" href="#intent-' + i.toLowerCase() + '">' + (isID() ? 'Lihat ' : 'Shop ') + pieces(intentCount(i)) + '</a></div>';
+    }).join('');
+    $('guideBody').innerHTML = '<div class="guide__row guide__row--head"><span>' + t('Material') + '</span><span>' + t('Intention') + '</span><span>' + t('Believed benefit') + '</span><span class="guide__n">' + t('Pieces') + '</span></div>' +
+      GUIDE_ORDER.map(function (k) {
+        var s = STONES[k];
+        return '<div class="guide__row"><h3 class="guide__stone">' + t(s.name) + '</h3><p class="guide__intent">' + (intentList(s.intents, isID() ? ' dan ' : ' and ') || '–') + '</p><p>' + t(s.text) + '</p><p class="guide__n">' + usesStone(k) + '</p></div>';
+      }).join('');
+  }
+
+  /* ── rail on the home page ── */
+  var rail = $('rail'), prev = $('railPrev'), next = $('railNext');
+  function renderRail() {
+    rail.innerHTML = RAIL.map(function (n) {
+      var p = byNo[n];
+      return '<li><button type="button" data-open="' + n + '"><span class="rail__media">' + (NOPHOTO[n] ? phHtml() : '<img src="' + srcOf(n, 'p') + '" alt="' + esc(p.name) + '" width="720" height="960" loading="lazy">') + '</span><span class="rail__name">' + esc(p.name) + '</span><span class="rail__price">' + moneyP(p) + '</span></button></li>';
+    }).join('');
+  }
+  function step(dir) { var item = rail.querySelector('li'); if (item) rail.scrollBy({ left: dir * (item.getBoundingClientRect().width + 14) * 2, behavior: 'smooth' }); }
+  function syncRail() { prev.disabled = rail.scrollLeft < 8; next.disabled = rail.scrollLeft + rail.clientWidth > rail.scrollWidth - 8; }
+  prev.addEventListener('click', function () { step(-1); }); next.addEventListener('click', function () { step(1); });
+  rail.addEventListener('scroll', syncRail, { passive: true }); window.addEventListener('resize', syncRail);
+
+  /* ── product sheet ── */
+  var sheet = $('sheet'), sheetNo = null;
+  function fillSheet(p) {
+    var cloth = p.stones.length && p.stones.every(function (k) { return STONES[k].cloth; });
+    var spec = '<div><dt>' + t('Model name') + '</dt><dd>' + esc(p.name) + '</dd></div>' +
+      (p.stones.length ? '<div><dt>' + t(cloth ? 'Main material' : 'Main stone') + '</dt><dd>' + stoneNames(p) + '</dd></div>' : '') +
+      (p.chain ? '<div><dt>' + t('Chain material') + '</dt><dd>' + t(p.chain) + '</dd></div>' : '') +
+      (p.intents.length ? '<div><dt>' + t('Wellness intention') + '</dt><dd>' + p.intents.map(function (i) { return '<a href="#intent-' + i.toLowerCase() + '">' + t(i) + '</a>'; }).join(' &amp; ') + '</dd></div>' : '');
+    $('sheetMedia').innerHTML = NOPHOTO[p.n] ? phHtml() : '<img src="' + srcOf(p.n, 'f') + '" alt="' + esc(p.name) + '" width="' + p.w + '" height="' + p.h + '">';
+    $('sheetBody').innerHTML =
+      '<p class="sheet__no">' + label(p) + '</p>' +
+      '<h2 class="serif" id="sheetTitle">' + esc(p.name) + '</h2>' +
+      '<p class="sheet__price">' + moneyP(p) + '</p>' +
+      (p.usd != null ? (CURRENCY === 'USD' ? '' : '<p class="sheet__approx">' + usdStr(p) + '. ' + t('Listed in US dollars. Yare confirms the final price in rupiah.') + '</p>')
+        : (CURRENCY !== 'IDR' && p.price != null ? '<p class="sheet__approx">' + rp(p.price) + '. ' + t('Approximate price. Yare confirms the final price in rupiah.') + '</p>' : '')) +
+      '<dl class="spec">' + spec + '</dl>' +
+      (p.stones.length ? '<div class="sheet__stones">' + p.stones.map(function (k) { var s = STONES[k]; return '<div><h3>' + t(s.name) + '</h3><p>' + t(s.text) + '</p></div>'; }).join('') + '</div>' : '') +
+      '<div class="sheet__actions"><a class="btn" data-pick role="button" tabindex="0" data-href="' + esc(wa(askText(p))) + '">' + CHAT + t('Order on WhatsApp') + '</a>' +
+      '<button class="round" type="button" data-wish="' + p.n + '" aria-pressed="' + !!wishes[p.n] + '" aria-label="' + esc(L.save(p.name)) + '">' + HEART + '</button></div>' +
+      '<p class="sheet__ship">' + t('Jakarta: same-day delivery via GoSend or GrabExpress.') + ' <a class="link" href="#policies">' + t('Authenticity & returns') + '</a></p>' +
+      (p.listed ? '<p class="sheet__note">' + t('Catalogue name:') + ' ' + esc(p.orig) + '</p>'
+                : '<p class="sheet__note">' + t('New photo, not in the 2026 price list yet.') + (p.orig ? ' ' + t('Earlier catalogue name:') + ' ' + esc(p.orig) + '.' : ' ' + t('Name and stone to be confirmed by Yare.')) + '</p>');
+  }
+  function openSheet(n) {
+    var p = byNo[n]; if (!p) return;
+    sheetNo = n; fillSheet(p);
+    if (!sheet.open) { if (sheet.showModal) sheet.showModal(); else sheet.setAttribute('open', ''); }
+    $('sheetBody').scrollTop = 0;
+  }
+  function closeSheet() { sheetNo = null; if (sheet.open) { if (sheet.close) sheet.close(); else sheet.removeAttribute('open'); } }
+  $('sheetClose').addEventListener('click', closeSheet);
+  sheet.addEventListener('click', function (e) { if (e.target === sheet) closeSheet(); });
+  sheet.addEventListener('close', function () { sheetNo = null; });
+
+  function renderWishCount() { var n = count(wishes), el = $('wishCount'); el.textContent = n; el.hidden = n === 0; }
+
+  /* ── one listener for every catalogue control ── */
+  /* every general WhatsApp button lets the visitor pick the Indonesian or the US number */
+  var pick = $('waPick');
+  function openPick(href) {
+    $('pickId').href = href;
+    $('pickUs').href = href.replace('wa.me/' + WA_NUMBER, 'wa.me/' + WA_US);
+    if (pick.showModal) pick.showModal(); else pick.setAttribute('open', '');
+  }
+  function closePick() { if (pick.open) { if (pick.close) pick.close(); else pick.removeAttribute('open'); } }
+  $('pickClose').addEventListener('click', closePick);
+  pick.addEventListener('click', function (e) { if (e.target === pick || e.target.closest('#pickId,#pickUs')) setTimeout(closePick, 0); });
+  function pickFrom(e) {
+    var pk = e.target.closest('[data-pick]');
+    if (!pk || !pk.dataset.href) return;
+    e.preventDefault(); e.stopPropagation(); openPick(pk.dataset.href);
+  }
+  document.addEventListener('click', pickFrom, true);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') pickFrom(e); }, true);
+
+  document.addEventListener('click', function (e) {
+    var t0 = e.target.closest('[data-open],[data-wish],[data-intent],[data-copy],[data-lang]');
+    if (!t0) return;
+    if (t0.dataset.lang) { setLang(t0.dataset.lang); return; }
+    if (t0.dataset.open) { openSheet(+t0.dataset.open); return; }
+    if (t0.dataset.wish) {
+      var w = +t0.dataset.wish; if (wishes[w]) delete wishes[w]; else wishes[w] = true;
+      document.querySelectorAll('[data-wish="' + w + '"]').forEach(function (b) { b.setAttribute('aria-pressed', String(!!wishes[w])); });
+      renderWishCount(); renderFilters(); if (state.saved) { renderHead(); renderGrid(); }
+      say(byNo[w].name + (wishes[w] ? (isID() ? ' disimpan' : ' saved') : (isID() ? ' dihapus dari simpanan' : ' removed from saved'))); return;
+    }
+    if (t0.dataset.copy) {
+      var text = t0.dataset.copy, done = function () { say(text + (isID() ? ' disalin' : ' copied')); };
+      var fallback = function () { var el = $('mailAddr'); var r = document.createRange(); r.selectNodeContents(el); var s = getSelection(); s.removeAllRanges(); s.addRange(r); say(isID() ? 'Alamat dipilih. Salin dengan keyboard.' : 'Address selected. Copy it with your keyboard.'); };
+      try { navigator.clipboard.writeText(text).then(done, fallback); } catch (err) { fallback(); }
+      return;
+    }
+    if (t0.hasAttribute('data-intent')) { state.intent = t0.dataset.intent || null; renderFilters(); renderGrid(); settle(); return; }
+  });
+
+  /* ── pages: every menu item swaps the whole page (plain #tokens) ── */
+  var VIEWS = { home: $('viewHome'), shop: $('viewShop'), guide: $('viewGuide'), about: $('viewAbout'), contact: $('viewContact'), policies: $('viewPolicies') };
+  var ALIAS = { '': 'home', top: 'home', story: 'about', ordering: 'contact', order: 'contact', 'shop-misc': 'shop-sets', policy: 'policies', returns: 'policies', authenticity: 'policies' };
+  var homeNight = $('homeNight');
+  function show(view) {
+    state.view = view;
+    Object.keys(VIEWS).forEach(function (k) { VIEWS[k].hidden = k !== view; });
+    homeNight.hidden = view !== 'home';
+    document.querySelectorAll('[data-nav]').forEach(function (a) { if (a.dataset.nav === view) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
+    if (view === 'home') requestAnimationFrame(syncRail);
+  }
+  function route() {
+    var token = (location.hash || '').replace('#', '');
+    if (ALIAS[token] != null) token = ALIAS[token];
+    closeSheet(); closeMenu();
+    if (token === 'footer') { $('footer').scrollIntoView(); return; }
+    var view = VIEWS[token] ? token : 'shop';
+    if (view === 'shop') {
+      state.saved = token === 'saved'; state.cat = 'all'; state.intent = null;
+      if (token.indexOf('shop-') === 0 && COLL[token.slice(5)]) state.cat = token.slice(5);
+      else if (token.indexOf('intent-') === 0) { var name = token.slice(7); state.intent = INTENTS.filter(function (i) { return i.toLowerCase() === name; })[0] || null; }
+      else if (token !== 'shop' && token !== 'saved') { view = 'home'; }
+      if (view === 'shop') renderShop();
+    }
+    if (view === 'contact') fillPieces();
+    show(view); window.scrollTo(0, 0);
+  }
+  window.addEventListener('hashchange', route);
+
+  /* ── header ── */
+  var header = document.querySelector('.header');
+  var onScroll = function () { header.classList.toggle('is-stuck', window.scrollY > 40); };
+  window.addEventListener('scroll', onScroll, { passive: true }); onScroll();
+  var menuBtn = $('menuBtn'), nav = $('nav');
+  function closeMenu() { nav.classList.remove('is-open'); menuBtn.setAttribute('aria-expanded', 'false'); }
+  menuBtn.addEventListener('click', function () { var open = nav.classList.toggle('is-open'); menuBtn.setAttribute('aria-expanded', String(open)); });
+  nav.addEventListener('click', function (e) {
+    if (!e.target.closest('a')) return;
+    closeMenu(); if (document.activeElement) document.activeElement.blur();
+    var item = e.target.closest('.nav__item'); if (item) item.classList.add('is-shut');
+  });
+  document.querySelectorAll('.nav__item').forEach(function (item) { item.addEventListener('mouseleave', function () { item.classList.remove('is-shut'); }); });
+
+  /* ── forms (front-end only for now) ── */
+  var EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  function note(el, kind, text) { el.dataset.state = kind; el.textContent = text; }
+  var savedList = function () { return Object.keys(wishes).map(Number).sort(function (x, y) { return x - y; }).map(function (n) { var p = byNo[n]; return (p.listed ? 'No. ' + pad(n) + ' ' : '') + p.name + ' (' + listPrice(p) + ')'; }); };
+  function fillPieces() {
+    var list = savedList(), box = $('oPieces'), hint = $('oPiecesHint');
+    if (list.length && !box.value.trim()) box.value = list.join('\n');
+    hint.textContent = list.length
+      ? (isID() ? 'Diisi dari ' + list.length + ' produk tersimpan. Silakan ubah.' : 'Filled in from your ' + list.length + ' saved piece' + (list.length === 1 ? '' : 's') + '. Edit freely.')
+      : (isID() ? 'Tips: ketuk ikon hati pada produk yang kamu suka, nanti muncul di sini.' : 'Tip: tap the heart on pieces you like and they will appear here.');
+  }
+  $('orderForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var f = { name: $('oName').value.trim(), phone: $('oPhone').value.trim(), email: $('oEmail').value.trim(), address: $('oAddress').value.trim(), pieces: $('oPieces').value.trim(), msg: $('oMsg').value.trim() };
+    var out = $('orderMsg'), send = $('orderSend'), id = isID();
+    send.hidden = true;
+    if (!f.name) { note(out, 'error', id ? 'Isi nama agar Yare tahu pesanan ini untuk siapa.' : 'Enter your name so Yare knows who the order is for.'); $('oName').focus(); return; }
+    if (f.email && !EMAIL.test(f.email)) { note(out, 'error', id ? 'Cek alamat email. Contoh: nama@contoh.com.' : 'Check the email address. It should look like name@example.com.'); $('oEmail').focus(); return; }
+    if (!f.pieces && !f.msg) { note(out, 'error', id ? 'Sebutkan minimal satu produk, atau tulis permintaanmu di kolom pesan.' : 'Name at least one piece, or describe your request in the message.'); $('oPieces').focus(); return; }
+    var lines = [id ? 'Halo Yare! Saya mau pesan.' : 'Hi Yare! I would like to place an order.', '', (id ? 'Nama: ' : 'Name: ') + f.name];
+    if (f.phone) lines.push((id ? 'Telepon: ' : 'Phone: ') + f.phone);
+    if (f.email) lines.push('Email: ' + f.email);
+    if (f.address) lines.push((id ? 'Alamat pengiriman: ' : 'Delivery address: ') + f.address);
+    if (f.pieces) lines.push('', id ? 'Produk:' : 'Pieces:', f.pieces);
+    if (f.msg) lines.push('', id ? 'Pesan:' : 'Message:', f.msg);
+    var body = lines.join('\n');
+    $('sendWa').href = wa(body);
+    $('sendMail').href = 'mailto:info@yarecraft.com?subject=' + encodeURIComponent((id ? 'Pesanan dari ' : 'Order request from ') + f.name) + '&body=' + encodeURIComponent(body);
+    send.hidden = false;
+    note(out, 'ok', id ? 'Pesananmu siap. Pilih cara mengirimnya.' : 'Your order is ready. Choose how to send it.');
+  });
+  ['oName', 'oPhone', 'oEmail', 'oAddress', 'oPieces', 'oMsg'].forEach(function (id) { $(id).addEventListener('input', function () { $('orderSend').hidden = true; }); });
+  function setWaLinks() {
+    document.querySelectorAll('[data-wa]').forEach(function (el) {
+      var m = WA_TEXT[el.dataset.wa]; if (!m) return;
+      var u = wa(m[LANG], el.dataset.num === 'us' ? WA_US : null);
+      if (el.hasAttribute('data-pick')) { el.dataset.href = u; el.removeAttribute('href'); el.removeAttribute('target'); el.setAttribute('role', 'button'); el.tabIndex = 0; }
+      else el.href = u;
+    });
+  }
+
+  /* ── switching language and currency re-draws everything the script wrote ── */
+  function redraw() {
+    applyStatic(); setWaLinks(); renderIntents(); renderGuide(); renderRail();
+    if (state.view === 'shop') renderShop();
+    if (state.view === 'contact') fillPieces();
+    if (sheetNo != null) fillSheet(byNo[sheetNo]);
+  }
+  function setLang(l) { if (l === LANG) return; LANG = l; store.set('yare-lang', l); redraw(); say(l === 'id' ? 'Bahasa Indonesia' : 'English'); }
+  var curSels = document.querySelectorAll('[data-cur]');
+  curSels.forEach(function (sel) {
+    sel.value = CURRENCY;
+    sel.addEventListener('change', function () {
+      CURRENCY = CUR[sel.value] ? sel.value : 'IDR'; store.set('yare-cur', CURRENCY);
+      curSels.forEach(function (s) { s.value = CURRENCY; });
+      redraw();
+    });
+  });
+
+  /* the hero has its own WhatsApp button, so the floating one waits until the hero buttons scroll away */
+  var heroCtas = document.querySelector('.hero__ctas'), floatBtn = document.querySelector('.wa-float');
+  if (heroCtas && floatBtn && 'IntersectionObserver' in window) {
+    new IntersectionObserver(function (es) { floatBtn.classList.toggle('is-tucked', es[0].isIntersecting && state.view === 'home'); }).observe(heroCtas);
+    window.addEventListener('hashchange', function () { if (state.view !== 'home') floatBtn.classList.remove('is-tucked'); });
+  }
+
+  renderWishCount(); redraw(); route(); syncRail();
+})();
+</script>
